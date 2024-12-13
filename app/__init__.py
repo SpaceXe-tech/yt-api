@@ -26,12 +26,12 @@ app = FastAPI(
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
 )
-print(temp_dir)
+
 app.include_router(v1_router, prefix="/v1", tags=["v1"])
 app.mount("/static", StaticFiles(directory=temp_dir, check_dir=False), name="static")
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def home():
     return RedirectResponse("/api/docs")
 

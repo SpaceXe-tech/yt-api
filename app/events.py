@@ -1,11 +1,16 @@
 """Startup and shutdown events"""
 
-from app.utils import create_temp_dirs
+from app.utils import create_temp_dirs, download_dir
 from fastapi import FastAPI
+from shutil import rmtree
 
 
 def event_startup_create_tempdirs():
     create_temp_dirs()
+
+
+def event_shutdown_clear_previous_downloads():
+    rmtree(download_dir)
 
 
 def register_events(app: FastAPI) -> FastAPI:

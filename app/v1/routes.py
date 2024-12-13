@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Query, Request
 import app.v1.models as models
-from app.utils import download_dir
+from app.utils import download_dir, sanitize_filename
 from app.config import loaded_config
 from pathlib import Path
-
 from pytubefix import Search, YouTube
+from os import rename
 
 router = APIRouter()
 
@@ -60,12 +60,14 @@ async def process_video_for_download(
     else:
         ys = yt.streams.get_highest_resolution()
 
-    saved_to = ys.download(
+    saved_to = Path(ys.download(
         output_path=download_dir, skip_existing=True, filename_prefix="DEMO_"
-    )
-    filename = Path(saved_to).name
+    ))
+    filename = sanitize_filename(saved_to.name)
+    rename(saved_to, Path(download_dir) / filename)
+
     return models.MediaDownloadResponse(
         is_success=True,
-        filename=filename,
+        filename=saved_to.name,
         link=f"{host}/static/{download_dir.name}/{filename}",
     )
