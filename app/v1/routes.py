@@ -60,9 +60,11 @@ async def process_video_for_download(
     else:
         ys = yt.streams.get_highest_resolution()
 
-    saved_to = Path(ys.download(
-        output_path=download_dir, skip_existing=True, filename_prefix="DEMO_"
-    ))
+    saved_to = Path(
+        ys.download(
+            output_path=download_dir, skip_existing=True, filename_prefix="DEMO_"
+        )
+    )
     filename = sanitize_filename(saved_to.name)
     rename(saved_to, Path(download_dir) / filename)
 

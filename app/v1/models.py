@@ -11,6 +11,36 @@ class SearchVideosResponse(BaseModel):
     query: str = Field(description="Search query")
     results: list[VideoMetadata]
 
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "query": "hello",
+                "results": [
+                    {
+                        "title": "Adele - Hello (Official Music Video)",
+                        "url": "https://youtube.com/watch?v=YQHsXMglC9A",
+                    },
+                    {
+                        "title": "FATIMA ALTIERI- HELLO- ( OFFICIAL MUSIC VIDEO)",
+                        "url": "https://youtube.com/watch?v=X_jX3D9lCCM",
+                    },
+                    {
+                        "title": "Hello (Folklore Riddim) | Kes | Soca 2018 (AdvoKit Productions x Julianspromo)",
+                        "url": "https://youtube.com/watch?v=Nh_iSHsVsPA",
+                    },
+                    {
+                        "title": "Aqyila - Hello (Official Audio)",
+                        "url": "https://youtube.com/watch?v=k5t0RrijpHg",
+                    },
+                    {
+                        "title": "Adele - Hello (Lyrics)",
+                        "url": "https://youtube.com/watch?v=be12BC5pQLE",
+                    },
+                ],
+            }
+        }
+    }
+
 
 class SearchVideosResponseUrlsOnly(BaseModel):
 
@@ -19,6 +49,26 @@ class SearchVideosResponseUrlsOnly(BaseModel):
 
     query: str = Field(description="Search query")
     results: list[VideoMetadata]
+
+    model_config = {
+        "json_config_extras": {
+            "example": {
+                "query": "hello",
+                "results": [
+                    {"url": "https://youtube.com/watch?v=YQHsXMglC9A"},
+                    {"url": "https://youtube.com/watch?v=k5t0RrijpHg"},
+                    {"url": "https://youtube.com/watch?v=X_jX3D9lCCM"},
+                    {"url": "https://youtube.com/watch?v=mHONNcZbwDY"},
+                    {"url": "https://youtube.com/watch?v=Nh_iSHsVsPA"},
+                    {"url": "https://youtube.com/watch?v=be12BC5pQLE"},
+                    {"url": "https://youtube.com/watch?v=eldeaIAv_wE"},
+                    {"url": "https://youtube.com/watch?v=8zDSikCh96c"},
+                    {"url": "https://youtube.com/watch?v=-YV58L-jDsY"},
+                    {"url": "https://youtube.com/watch?v=ZGCQ2jkq5O0"},
+                ],
+            }
+        }
+    }
 
 
 class VideoDownloadPayload(BaseModel):
@@ -29,6 +79,23 @@ class VideoDownloadPayload(BaseModel):
         "best", description="Video download quality"
     )
 
+    model_config = {
+        "json_config_extras": {
+            "examples": [
+                {
+                    "url": "https://youtu.be/S3wsCRJVUyg",
+                    "format": "mp4",
+                    "quality": "best",
+                },
+                {
+                    "url": "https://youtu.be/S3wsCRJVUyg",
+                    "format": "m4a",
+                    "quality": "normal",
+                },
+            ]
+        }
+    }
+
 
 class MediaDownloadResponse(BaseModel):
 
@@ -37,3 +104,13 @@ class MediaDownloadResponse(BaseModel):
     link: Optional[HttpUrl] = Field(
         None, description="Link pointing to downloadable media file"
     )
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "is_success": True,
+                "filename": "DEMO_A Few Moments Later | SpongeBob Time Card #8.mp4",
+                "link": "http://localhost:8000/static/media/DEMO_A_Few_Moments_Later___SpongeBob_Time_Card__8.mp4",
+            }
+        }
+    }

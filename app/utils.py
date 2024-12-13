@@ -18,7 +18,7 @@ def create_temp_dirs() -> NoReturn:
         os.makedirs(directory, exist_ok=True)
 
 
-def sanitize_filename(filename: Path|str) -> Path:
+def sanitize_filename(filename: Path | str) -> Path:
     # Remove illegal characters
     cleaned = re.sub(r'[\\/:*?"<>|\s#]', "_", str(filename))
     # Remove leading/trailing whitespace
