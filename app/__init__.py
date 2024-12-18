@@ -4,7 +4,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from app.events import register_events
-from app.utils import temp_dir
+from app.utils import temp_dir, create_temp_dirs
+
+create_temp_dirs()
+
 from app.v1 import v1_router
 
 app = FastAPI(

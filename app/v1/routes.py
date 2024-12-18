@@ -1,12 +1,20 @@
 from fastapi import APIRouter, Query, Request
 import app.v1.models as models
-from app.utils import download_dir, sanitize_filename
+from app.utils import download_dir, sanitize_filename, router_exception_handler
 from app.config import loaded_config
 from pathlib import Path
 from pytubefix import Search, YouTube
 from os import rename
+from yt_dlp_bonus import YoutubeDLBonus, Download
+from yt_dlp_bonus.constants import audioQualities
 
 router = APIRouter()
+
+yt = YoutubeDLBonus()
+
+download = Download(
+    working_directory=download_dir, clear_temps=True, file_prefix="TEST_"
+)
 
 po_kwargs = dict(
     use_po_token=True,
@@ -14,10 +22,11 @@ po_kwargs = dict(
     proxies={"https": loaded_config.proxy} if loaded_config.proxy else None,
 )
 
-search_limit = 5
+search_limit = 4
 
 
 @router.get("/search", name="Search videos")
+@router_exception_handler
 async def search_videos(
     q: str = Query(description="Video title"),
 ) -> models.SearchVideosResponse:
@@ -35,6 +44,7 @@ async def search_videos(
 
 
 @router.get("/search/url", name="Search videos (url)")
+@router_exception_handler
 async def search_videos(
     q: str = Query(description="Video title"),
 ) -> models.SearchVideosResponseUrlsOnly:
@@ -45,25 +55,50 @@ async def search_videos(
     return models.SearchVideosResponseUrlsOnly(query=q, results=videos_found_container)
 
 
+@router.post("/metadata", name="Video metadata")
+@router_exception_handler
+async def get_video_metadata(
+    payload: models.VideoMetadataPayload,
+) -> models.VideoMetadataResponse:
+    extracted_info = yt.extract_info_and_form_model(payload.url.__str__())
+    video_formats = yt.get_videos_quality_by_extension(
+        extracted_info, ext=payload.extension
+    )
+    updated_video_formats = yt.update_audio_video_size(video_formats)
+    audio_formats = []
+    video_formats = []
+    for quality, format in updated_video_formats.items():
+        if quality in audioQualities:
+            audio_formats.append(dict(quality=quality, size=format.audio_video_size))
+        else:
+            video_formats.append(dict(quality=quality, size=format.audio_video_size))
+    return models.VideoMetadataResponse(
+        id=extracted_info.id,
+        title=extracted_info.title,
+        ext=payload.extension,
+        thumbnail=f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
+        audio=audio_formats,
+        video=video_formats,
+    )
+
+
 @router.post("/download", name="Process download")
+@router_exception_handler
 async def process_video_for_download(
-    request: Request,
-    download_payload: models.VideoDownloadPayload,
+    request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
-    """Download video in mp4 or m4a formats"""
-    # Quality check implementation needed
-    yt = YouTube(download_payload.url.__str__(), **po_kwargs)
     host = f"{request.url.scheme}://{request.url.netloc}"
-    if download_payload.format == "m4a":
-        ys = yt.streams.get_audio_only()
-
-    else:
-        ys = yt.streams.get_highest_resolution()
-
-    saved_to = Path(
-        ys.download(
-            output_path=download_dir, skip_existing=True, filename_prefix="DEMO_"
-        )
+    extracted_info = yt.extract_info_and_form_model(payload.url.__str__())
+    video_formats = yt.get_videos_quality_by_extension(
+        extracted_info, ext=payload.extension
+    )
+    # check if the desired quality exists
+    saved_to: Path = download.run(
+        title=extracted_info.title,
+        quality=payload.quality,
+        quality_infoFormat=video_formats,
+        audio_bitrates=payload.audio_bitrates,
+        audio_only=payload.audio_only,
     )
     filename = sanitize_filename(saved_to.name)
     rename(saved_to, Path(download_dir) / filename)
