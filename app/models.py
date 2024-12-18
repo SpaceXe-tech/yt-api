@@ -17,6 +17,7 @@ class EnvVariables(BaseModel):
     filename_prefix: Optional[str] = ""
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
+    search_limit: Optional[int] = 5
 
     @field_validator("working_directory")
     def validate_working_directory(value):

@@ -7,13 +7,16 @@ from pytubefix import Search, YouTube
 from os import rename
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
+from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
 
 router = APIRouter()
 
 yt = YoutubeDLBonus()
 
 download = Download(
-    working_directory=download_dir, clear_temps=True, file_prefix="TEST_"
+    working_directory=download_dir,
+    clear_temps=loaded_config.clear_temps,
+    file_prefix=loaded_config.filename_prefix,
 )
 
 po_kwargs = dict(
@@ -21,8 +24,6 @@ po_kwargs = dict(
     po_token_verifier=loaded_config.po_token_verifier,
     proxies={"https": loaded_config.proxy} if loaded_config.proxy else None,
 )
-
-search_limit = 4
 
 
 @router.get("/search", name="Search videos")
@@ -38,7 +39,7 @@ async def search_videos(
             dict(title=video.title, url=video.watch_url, duration=video.length)
         )
         video_count += 1
-        if video_count >= search_limit:
+        if video_count == loaded_config.search_limit:
             break
     return models.SearchVideosResponse(query=q, results=videos_found_container)
 
@@ -69,9 +70,19 @@ async def get_video_metadata(
     video_formats = []
     for quality, format in updated_video_formats.items():
         if quality in audioQualities:
-            audio_formats.append(dict(quality=quality, size=format.audio_video_size))
+            audio_formats.append(
+                dict(
+                    quality=quality,
+                    size=get_size_in_mb_from_bytes(format.audio_video_size),
+                )
+            )
         else:
-            video_formats.append(dict(quality=quality, size=format.audio_video_size))
+            video_formats.append(
+                dict(
+                    quality=quality,
+                    size=get_size_in_mb_from_bytes(format.audio_video_size),
+                )
+            )
     return models.VideoMetadataResponse(
         id=extracted_info.id,
         title=extracted_info.title,
@@ -92,7 +103,6 @@ async def process_video_for_download(
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=payload.extension
     )
-    # check if the desired quality exists
     saved_to: Path = download.run(
         title=extracted_info.title,
         quality=payload.quality,

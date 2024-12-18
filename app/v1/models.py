@@ -112,7 +112,7 @@ class VideoMetadataPayload(BaseModel):
 class VideoMetadataResponse(BaseModel):
     class MediaMetadata(BaseModel):
         quality: str  # mediaQualitiesType
-        size: int
+        size: str
 
     title: str
     id: str
@@ -129,19 +129,19 @@ class VideoMetadataResponse(BaseModel):
                 "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
                 "ext": "mp4",
                 "audio": [
-                    {"quality": "ultralow", "size": 682923},
-                    {"quality": "low", "size": 1318452},
-                    {"quality": "medium", "size": 2599235},
+                    {"quality": "ultralow", "size": "0.68 MB"},
+                    {"quality": "low", "size": "1.32 MB"},
+                    {"quality": "medium", "size": "2.6 MB"},
                 ],
                 "video": [
-                    {"quality": "144p", "size": 4234331},
-                    {"quality": "240p", "size": 6359946},
-                    {"quality": "360p", "size": 9910457},
-                    {"quality": "480p", "size": 15383561},
-                    {"quality": "720p", "size": 25566169},
-                    {"quality": "1080p", "size": 53647456},
-                    {"quality": "1440p", "size": 135255080},
-                    {"quality": "2160p", "size": 263936850},
+                    {"quality": "144p", "size": "4.23 MB"},
+                    {"quality": "240p", "size": "6.36 MB"},
+                    {"quality": "360p", "size": "9.91 MB"},
+                    {"quality": "480p", "size": "15.38 MB"},
+                    {"quality": "720p", "size": "25.57 MB"},
+                    {"quality": "1080p", "size": "53.65 MB"},
+                    {"quality": "1440p", "size": "135.26 MB"},
+                    {"quality": "2160p", "size": "263.94 MB"},
                 ],
             }
         }
