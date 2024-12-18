@@ -18,6 +18,7 @@ class EnvVariables(BaseModel):
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
     search_limit: Optional[int] = 5
+    chunk_size: Optional[int] = 4096
 
     @field_validator("working_directory")
     def validate_working_directory(value):

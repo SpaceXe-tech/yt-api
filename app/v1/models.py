@@ -173,6 +173,7 @@ class MediaDownloadResponse(BaseModel):
 
     is_success: bool = Field(description="Download successful status")
     filename: Optional[str] = None
+    filesize: str
     link: Optional[HttpUrl] = Field(
         None, description="Link pointing to downloadable media file"
     )
@@ -181,8 +182,9 @@ class MediaDownloadResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "is_success": True,
-                "filename": "DEMO_A Few Moments Later | SpongeBob Time Card #8.mp4",
-                "link": "http://localhost:8000/static/media/DEMO_A_Few_Moments_Later___SpongeBob_Time_Card__8.mp4",
+                "filename": "Joel Lwaga - Olodumare (Official Lyric Video) 240p.mp4",
+                "filesize": "6.29 MB",
+                "link": "http://localhost:8000/static/media/Joel_Lwaga_-_Olodumare_(Official_Lyric_Video)_240p.mp4",
             }
         }
     }

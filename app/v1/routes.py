@@ -4,7 +4,7 @@ from app.utils import download_dir, sanitize_filename, router_exception_handler
 from app.config import loaded_config
 from pathlib import Path
 from pytubefix import Search, YouTube
-from os import rename
+from os import rename, path
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
 from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
@@ -111,10 +111,12 @@ async def process_video_for_download(
         audio_only=payload.audio_only,
     )
     filename = sanitize_filename(saved_to.name)
-    rename(saved_to, Path(download_dir) / filename)
+    new_saved_to = Path(download_dir) / filename
+    rename(saved_to, new_saved_to)
 
     return models.MediaDownloadResponse(
         is_success=True,
         filename=saved_to.name,
+        filesize=get_size_in_mb_from_bytes(path.getsize(new_saved_to)),
         link=f"{host}/static/{download_dir.name}/{filename}",
     )
