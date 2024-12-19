@@ -11,7 +11,11 @@ from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
 
 router = APIRouter()
 
-yt = YoutubeDLBonus()
+yt = YoutubeDLBonus(
+    params = dict(
+        cookiefile=loaded_config.cookiefile
+    )
+)
 
 download = Download(
     working_directory=download_dir,
