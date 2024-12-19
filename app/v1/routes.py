@@ -12,20 +12,19 @@ from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
 router = APIRouter()
 
 yt = YoutubeDLBonus(
-    params = dict(
-        cookiefile=loaded_config.cookiefile
-    )
+    params=dict(cookiefile=loaded_config.cookiefile, proxy=loaded_config.proxy)
 )
 
 download = Download(
+    yt=yt,
     working_directory=download_dir,
     clear_temps=loaded_config.clear_temps,
     file_prefix=loaded_config.filename_prefix,
 )
 
 po_kwargs = dict(
-    use_po_token=True,
-    po_token_verifier=loaded_config.po_token_verifier,
+    # use_po_token=True,
+    # po_token_verifier=loaded_config.po_token_verifier,
     proxies={"https": loaded_config.proxy} if loaded_config.proxy else None,
 )
 
