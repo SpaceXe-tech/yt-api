@@ -1,10 +1,11 @@
 """Youtube downloader app"""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from app.events import register_events
 from app.utils import temp_dir, create_temp_dirs
+import time
 
 create_temp_dirs()
 
@@ -37,6 +38,15 @@ app.mount("/static", StaticFiles(directory=temp_dir, check_dir=False), name="sta
 @app.get("/", include_in_schema=False)
 async def home():
     return RedirectResponse("/api/docs")
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 app = register_events(app)
