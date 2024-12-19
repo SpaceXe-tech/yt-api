@@ -31,7 +31,7 @@ po_kwargs = dict(
 
 @router.get("/search", name="Search videos")
 @router_exception_handler
-async def search_videos(
+def search_videos(
     q: str = Query(description="Video title"),
 ) -> models.SearchVideosResponse:
     """Search videos"""
@@ -49,7 +49,7 @@ async def search_videos(
 
 @router.get("/search/url", name="Search videos (url)")
 @router_exception_handler
-async def search_videos(
+def search_videos(
     q: str = Query(description="Video title"),
 ) -> models.SearchVideosResponseUrlsOnly:
     """Search videos and return video urls only"""
@@ -61,7 +61,7 @@ async def search_videos(
 
 @router.post("/metadata", name="Video metadata")
 @router_exception_handler
-async def get_video_metadata(
+def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
     extracted_info = yt.extract_info_and_form_model(payload.url.__str__())
@@ -98,7 +98,7 @@ async def get_video_metadata(
 
 @router.post("/download", name="Process download")
 @router_exception_handler
-async def process_video_for_download(
+def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
     host = f"{request.url.scheme}://{request.url.netloc}"

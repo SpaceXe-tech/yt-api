@@ -41,9 +41,9 @@ def router_exception_handler(func: t.Callable):
     """
 
     @wraps(func)
-    async def decorator(*args, **kwargs):
+    def decorator(*args, **kwargs):
         try:
-            resp = await func(*args, **kwargs)
+            resp = func(*args, **kwargs)
             return resp
         except (AssertionError, UserInputError) as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
