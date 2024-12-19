@@ -1,3 +1,4 @@
 python-dotenv==1.0.0
 fastapi[standard]==0.115.5
 pytubefix==8.8.1
+yt-dlp-bonus>=0.0.3

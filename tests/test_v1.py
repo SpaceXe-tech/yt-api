@@ -22,35 +22,68 @@ def test_video_search():
     models.SearchVideosResponse(**resp.json())
 
 
+def test_video_search_urls_only():
+    resp = client.get("/v1/search/url", params=dict(q="Hello"))
+    assert resp.is_success
+    models.SearchVideosResponseUrlsOnly(**resp.json())
+
+
 @pytest.mark.parametrize(
-    ["link", "format", "quality"],
+    ["url", "extension"],
     [
-        (video_link, "mp4", "best"),
-        (video_link, "m4a", "normal"),
+        ("https://youtu.be/lw5tB9LQQVM", "mp4"),
+        ("https://youtu.be/lw5tB9LQQVM", "webm"),
     ],
 )
-def test_download_processing(link, format, quality):
+def test_video_metadata(url, extension):
+    resp = client.post("/v1/metadata", json=dict(url=url, extension=extension))
+    assert resp.is_success
+    models.VideoMetadataResponse(**resp.json())
+
+
+@pytest.mark.parametrize(
+    ["url", "quality", "extension", "audio_bitrates", "audio_only"],
+    [
+        ("https://youtu.be/S3wsCRJVUyg", "1080p", "mp4", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "720p", "webm", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "medium", "webm", "192k", True),
+        ("https://youtu.be/S3wsCRJVUyg", "low", "mp4", "320k", True),
+    ],
+)
+def test_download_processing(url, quality, extension, audio_bitrates, audio_only):
     resp = client.post(
         "/v1/download",
-        json=dict(url=link, format=format, quality=quality),
+        json=dict(
+            url=url,
+            quality=quality,
+            extension=extension,
+            audio_bitrates=audio_bitrates,
+            audio_only=audio_only,
+        ),
     )
     assert resp.is_success
     models.MediaDownloadResponse(**resp.json())
 
 
 @pytest.mark.parametrize(
-    ["link", "format", "quality"],
+    ["url", "quality", "extension", "audio_bitrates", "audio_only"],
     [
-        (video_link, "mp4", "best"),
-        (video_link, "m4a", "normal"),
+        ("https://youtu.be/S3wsCRJVUyg", "1080p", "mp4", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "medium", "webm", "192k", True),
     ],
 )
-def test_download_media(link, format, quality):
+def test_download_media(url, quality, extension, audio_bitrates, audio_only):
     resp = client.post(
         "/v1/download",
-        json=dict(url=link, format=format, quality=quality),
+        json=dict(
+            url=url,
+            quality=quality,
+            extension=extension,
+            audio_bitrates=audio_bitrates,
+            audio_only=audio_only,
+        ),
     )
     assert resp.is_success
     media = models.MediaDownloadResponse(**resp.json())
-    static_resp = client.get(media.link)
+    static_resp = client.get(str(media.link))
     assert static_resp.is_success
