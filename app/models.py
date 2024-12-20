@@ -24,7 +24,7 @@ class EnvVariables(BaseModel):
     # Downloader params - yt_dlp
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None
-    http_chunk_size: Optional[int] = 1024
+    http_chunk_size: Optional[int] = 4096
     updatetime: Optional[bool] = False
     buffersize: Optional[int] = None
     ratelimit: Optional[int] = None
@@ -46,10 +46,9 @@ class EnvVariables(BaseModel):
 
     @property
     def ytdlp_params(self) -> dict[str, int | bool | None]:
-        return dict(
-            proxy=self.proxy,
+        params = dict(
             cookiefile=self.cookiefile,
-            # http_chunk_size=self.http_chunk_size,
+            http_chunk_size=self.http_chunk_size,
             updatetime=self.updatetime,
             buffersize=self.buffersize,
             ratelimit=self.ratelimit,
@@ -68,6 +67,9 @@ class EnvVariables(BaseModel):
             geo_bypass=self.geo_bypass,
             geo_bypass_country=self.geo_bypass_country,
         )
+        if self.proxy:
+            # Pasing proxy with null value makes download to fail
+            params["proxy"] = self.proxy
 
     @field_validator("working_directory")
     def validate_working_directory(value):
