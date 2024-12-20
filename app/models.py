@@ -1,6 +1,6 @@
 """Global models"""
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, PositiveInt, HttpUrl
 from typing import Optional
 from pathlib import Path
 import os
@@ -19,8 +19,12 @@ class EnvVariables(BaseModel):
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
     search_limit: Optional[int] = 5
-    video_info_cache_period_in_hrs: Optional[int] = 4
+    video_info_cache_period_in_hrs: Optional[PositiveInt] = 4
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
+
+    # static server options
+    static_server_url: HttpUrl
+
     # Downloader params - yt_dlp
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None

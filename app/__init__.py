@@ -1,10 +1,9 @@
 """Youtube downloader app"""
 
 from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from app.events import register_events
-from app.utils import temp_dir, create_temp_dirs
+from app.utils import create_temp_dirs
 import time
 
 create_temp_dirs()
@@ -30,10 +29,6 @@ app = FastAPI(
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
 )
-
-app.include_router(v1_router, prefix="/v1", tags=["v1"])
-app.mount("/static", StaticFiles(directory=temp_dir, check_dir=False), name="static")
-
 
 @app.get("/", include_in_schema=False)
 async def home():

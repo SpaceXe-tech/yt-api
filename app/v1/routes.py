@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Query, Request
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
-from app.utils import download_dir, sanitize_filename, router_exception_handler
-from app.config import loaded_config
+from app.utils import router_exception_handler
+from app.config import loaded_config, download_dir
 from pathlib import Path
 from pytubefix import Search, YouTube
-from os import rename, path
+from os import path
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
 from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
@@ -98,9 +98,8 @@ def get_video_metadata(
 @router.post("/download", name="Process download")
 @router_exception_handler
 def process_video_for_download(
-    request: Request, payload: models.MediaDownloadProcessPayload
+     payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
-    host = f"{request.url.scheme}://{request.url.netloc}"
     extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=payload.extension
@@ -112,13 +111,11 @@ def process_video_for_download(
         audio_bitrates=payload.audio_bitrates,
         audio_only=payload.audio_only,
     )
-    filename = sanitize_filename(saved_to.name)
-    new_saved_to = Path(download_dir) / filename
-    rename(saved_to, new_saved_to)
+    filename = saved_to.name
 
     return models.MediaDownloadResponse(
         is_success=True,
         filename=saved_to.name,
-        filesize=get_size_in_mb_from_bytes(path.getsize(new_saved_to)),
-        link=f"{host}/static/{download_dir.name}/{filename}",
+        filesize=get_size_in_mb_from_bytes(path.getsize(saved_to)),
+        link=path.join(loaded_config.static_server_url, filename),
     )

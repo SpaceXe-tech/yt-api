@@ -3,3 +3,4 @@ fastapi[standard]==0.115.5
 pytubefix==8.8.1
 yt-dlp-bonus>=0.0.4
 sqlmodel>=0.0.22
+uwsgi>=2.0.28

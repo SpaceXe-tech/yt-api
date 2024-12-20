@@ -5,19 +5,13 @@ import re
 import logging
 from pathlib import Path
 import typing as t
-from app.config import loaded_config
 from functools import wraps
 from fastapi import HTTPException
 from fastapi import status
 from yt_dlp_bonus.exceptions import UserInputError
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
-
-working_dir = Path(loaded_config.working_directory)
-
-temp_dir = working_dir / "static"
-
-download_dir = temp_dir / "media"
+from app.config import download_dir
 
 logger = logging.getLogger(__file__)
 
@@ -31,7 +25,7 @@ compiled_video_id_patterns = (
 
 def create_temp_dirs() -> t.NoReturn:
     """Create temp-dir for saving files temporarily"""
-    for directory in [temp_dir, download_dir]:
+    for directory in [download_dir]:
         os.makedirs(directory, exist_ok=True)
 
 
@@ -91,3 +85,7 @@ def get_video_id(url: str) -> str:
         if match:
             return match.group()
     raise InvalidVideoUrl(f"Invalid video url passed - {url}")
+
+def get_link_to_static_file(filename:str):
+    """Get absolute url to a static file"""
+    
