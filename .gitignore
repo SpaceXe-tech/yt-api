@@ -163,3 +163,9 @@ cython_debug/
 test-*.py
 static/media/
 run.sh
+*.part
+*.mp3
+*.webm
+*.mp4
+*.opus
+*.m4a

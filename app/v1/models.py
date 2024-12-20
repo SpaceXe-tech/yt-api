@@ -153,7 +153,7 @@ class MediaDownloadProcessPayload(BaseModel):
     url: HttpUrl = Field(description="Link to the Youtube video")
     quality: mediaQualitiesType
     extension: Literal["mp4", "webm"] = "mp4"
-    audio_bitrates: audioBitratesType = "128k"
+    audio_bitrates: audioBitratesType | None = None
     audio_only: bool = False
 
     model_config = {
