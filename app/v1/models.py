@@ -124,28 +124,30 @@ class VideoMetadataResponse(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "id": "lw5tB9LQQVM",
-            "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
-            "channel": "MariooOfficial",
-            "upload_date": "1970-08-23T06:28:47Z",
-            "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
-            "duration_string": "2:34",
-            "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
-            "audio": [
-                {"quality": "ultralow", "size": "0.68 MB"},
-                {"quality": "low", "size": "1.32 MB"},
-                {"quality": "medium", "size": "2.6 MB"},
-            ],
-            "video": [
-                {"quality": "144p", "size": "4.14 MB"},
-                {"quality": "240p", "size": "5.99 MB"},
-                {"quality": "360p", "size": "10.43 MB"},
-                {"quality": "480p", "size": "14.88 MB"},
-                {"quality": "720p", "size": "31.64 MB"},
-                {"quality": "1080p", "size": "52.14 MB"},
-                {"quality": "1440p", "size": "171.99 MB"},
-                {"quality": "2160p", "size": "342.56 MB"},
-            ],
+            "example": {
+                "id": "lw5tB9LQQVM",
+                "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
+                "channel": "MariooOfficial",
+                "upload_date": "1970-08-23T06:28:47Z",
+                "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
+                "duration_string": "2:34",
+                "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
+                "audio": [
+                    {"quality": "ultralow", "size": "0.68 MB"},
+                    {"quality": "low", "size": "1.32 MB"},
+                    {"quality": "medium", "size": "2.6 MB"},
+                ],
+                "video": [
+                    {"quality": "144p", "size": "4.14 MB"},
+                    {"quality": "240p", "size": "5.99 MB"},
+                    {"quality": "360p", "size": "10.43 MB"},
+                    {"quality": "480p", "size": "14.88 MB"},
+                    {"quality": "720p", "size": "31.64 MB"},
+                    {"quality": "1080p", "size": "52.14 MB"},
+                    {"quality": "1440p", "size": "171.99 MB"},
+                    {"quality": "2160p", "size": "342.56 MB"},
+                ],
+            }
         }
     }
 
