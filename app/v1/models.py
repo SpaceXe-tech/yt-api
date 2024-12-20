@@ -159,10 +159,10 @@ class MediaDownloadProcessPayload(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "url": "https://youtu.be/S3wsCRJVUyg",
-                "quality": "720p",
+                "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
+                "quality": "480p",
                 "extension": "mp4",
-                "audio_bitrates": "192k",
+                "audio_bitrates": "128k",
                 "audio_only": False,
             }
         }

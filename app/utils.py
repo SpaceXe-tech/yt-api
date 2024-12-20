@@ -11,7 +11,8 @@ from fastapi import status
 from yt_dlp_bonus.exceptions import UserInputError
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
-from app.config import download_dir
+from app.config import download_dir, loaded_config
+from fastapi import Request
 
 logger = logging.getLogger(__file__)
 
@@ -29,11 +30,11 @@ def create_temp_dirs() -> t.NoReturn:
         os.makedirs(directory, exist_ok=True)
 
 
-def sanitize_filename(filename: Path | str) -> Path:
+def sanitize_filename(filename: Path | str) -> str:
     # Remove illegal characters
-    cleaned = re.sub(r'[\\/:*?"<>|\s#]', "_", str(filename))
+    cleaned = re.sub(r'[\\/:*?"<>|#]', "", Path(filename).name)
     # Remove leading/trailing whitespace
-    return Path(cleaned.strip())
+    return cleaned.strip()
 
 
 def router_exception_handler(func: t.Callable):
@@ -86,6 +87,12 @@ def get_video_id(url: str) -> str:
             return match.group()
     raise InvalidVideoUrl(f"Invalid video url passed - {url}")
 
-def get_link_to_static_file(filename:str):
+
+def get_absolute_link_to_static_file(filename: str, request: Request):
     """Get absolute url to a static file"""
-    
+    if loaded_config.static_server_url:
+        return os.path.join(loaded_config.static_server_url.__str__(), filename)
+    else:
+        return os.path.join(
+            f"{request.url.scheme}://{request.url.netloc}", "static", "file", filename
+        )

@@ -23,7 +23,7 @@ class EnvVariables(BaseModel):
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
 
     # static server options
-    static_server_url: HttpUrl
+    static_server_url: Optional[str] = None
 
     # Downloader params - yt_dlp
     proxy: Optional[str] = None
@@ -89,6 +89,12 @@ class EnvVariables(BaseModel):
         cookiefile = Path(value)
         if not cookiefile.exists() or not cookiefile.is_file():
             raise TypeError(f"Invalid cookiefile passed - {value}")
+        return value
+
+    @field_validator("static_server_url")
+    def validate_static_server_url(value: str | None):
+        if value and not value.startswith("http"):
+            raise TypeError(f"Invalid value for static_server_url - {value}")
         return value
 
     def po_token_verifier(self) -> tuple[str, str]:

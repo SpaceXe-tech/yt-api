@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Query, Request
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
-from app.utils import router_exception_handler
+from app.utils import (
+    router_exception_handler,
+    get_absolute_link_to_static_file,
+    sanitize_filename,
+)
 from app.config import loaded_config, download_dir
 from pathlib import Path
 from pytubefix import Search, YouTube
@@ -87,7 +91,7 @@ def get_video_metadata(
             )
     return models.VideoMetadataResponse(
         id=extracted_info.id,
-        title=extracted_info.title,
+        title=sanitize_filename(extracted_info.title),
         ext=payload.extension,
         thumbnail=f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
         audio=audio_formats,
@@ -98,7 +102,7 @@ def get_video_metadata(
 @router.post("/download", name="Process download")
 @router_exception_handler
 def process_video_for_download(
-     payload: models.MediaDownloadProcessPayload
+    request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
     extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
@@ -117,5 +121,5 @@ def process_video_for_download(
         is_success=True,
         filename=saved_to.name,
         filesize=get_size_in_mb_from_bytes(path.getsize(saved_to)),
-        link=path.join(loaded_config.static_server_url, filename),
+        link=get_absolute_link_to_static_file(filename, request),
     )
