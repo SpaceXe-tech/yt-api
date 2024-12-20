@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query, Request
 import app.v1.models as models
+from app.v1.utils import get_extracted_info
 from app.utils import download_dir, sanitize_filename, router_exception_handler
 from app.config import loaded_config
 from pathlib import Path
@@ -62,7 +63,7 @@ def search_videos(
 def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
-    extracted_info = yt.extract_info_and_form_model(payload.url.__str__())
+    extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=payload.extension
     )
@@ -100,7 +101,7 @@ def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
     host = f"{request.url.scheme}://{request.url.netloc}"
-    extracted_info = yt.extract_info_and_form_model(payload.url.__str__())
+    extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=payload.extension
     )

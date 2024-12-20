@@ -19,10 +19,12 @@ class EnvVariables(BaseModel):
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
     search_limit: Optional[int] = 5
+    video_info_cache_period_in_hrs: Optional[int] = 4
+    database_engine: Optional[str] = "sqlite:///db.sqlite3"
     # Downloader params - yt_dlp
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None
-    http_chunk_size: Optional[int] = 2048
+    http_chunk_size: Optional[int] = 1024
     updatetime: Optional[bool] = False
     buffersize: Optional[int] = None
     ratelimit: Optional[int] = None
@@ -39,7 +41,7 @@ class EnvVariables(BaseModel):
     quiet: Optional[bool] = None
     allow_multiple_video_streams: Optional[bool] = None
     allow_multiple_audio_streams: Optional[bool] = None
-    geo_bypass: Optional[bool] = None
+    geo_bypass: Optional[bool] = True
     geo_bypass_country: Optional[str] = None
 
     @property
@@ -47,7 +49,7 @@ class EnvVariables(BaseModel):
         return dict(
             proxy=self.proxy,
             cookiefile=self.cookiefile,
-            http_chunk_size=self.http_chunk_size,
+            # http_chunk_size=self.http_chunk_size,
             updatetime=self.updatetime,
             buffersize=self.buffersize,
             ratelimit=self.ratelimit,

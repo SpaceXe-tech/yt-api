@@ -3,10 +3,15 @@
 from app.utils import create_temp_dirs, download_dir
 from fastapi import FastAPI
 from shutil import rmtree
+from app.db import create_tables
 
 
 def event_startup_create_tempdirs():
     create_temp_dirs()
+
+
+def event_startup_create_tables():
+    create_tables()
 
 
 def event_shutdown_clear_previous_downloads():

@@ -1,15 +1,13 @@
 import pytest
 from tests import client
 import app.v1.models as models
-from app.events import (
-    event_startup_create_tempdirs,
-)
+from app.events import event_startup_create_tempdirs, event_startup_create_tables
 
 video_link = "https://youtu.be/S3wsCRJVUyg?si=svRtQPHef9TSMABt"
 
 
 def run_startup_events():
-    for event in [event_startup_create_tempdirs]:
+    for event in [event_startup_create_tempdirs, event_startup_create_tables]:
         event()
 
 
