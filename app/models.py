@@ -1,9 +1,10 @@
 """Global models"""
 
-from pydantic import BaseModel, Field, field_validator, PositiveInt, HttpUrl
-from typing import Optional
+from pydantic import BaseModel, Field, field_validator, PositiveInt
+from typing import Optional, Literal
 from pathlib import Path
 import os
+import logging
 
 
 class EnvVariables(BaseModel):
@@ -21,11 +22,13 @@ class EnvVariables(BaseModel):
     search_limit: Optional[int] = 5
     video_info_cache_period_in_hrs: Optional[PositiveInt] = 4
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
+    default_extension: Literal["mp4", "webm"] = "webm"
 
     # static server options
     static_server_url: Optional[str] = None
 
     # Downloader params - yt_dlp
+    enable_logging: Optional[bool] = False
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None
     http_chunk_size: Optional[int] = 4096
@@ -74,6 +77,8 @@ class EnvVariables(BaseModel):
         if self.proxy:
             # Pasing proxy with null value makes download to fail
             params["proxy"] = self.proxy
+        if self.enable_logging:
+            params["logger"] = logging.getLogger(__name__)
 
     @field_validator("working_directory")
     def validate_working_directory(value):

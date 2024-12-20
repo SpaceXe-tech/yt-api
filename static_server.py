@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 """This module contains code for serving static contents using flask framework"""
 
 from flask import Flask, request, send_from_directory
@@ -14,8 +16,6 @@ ref_directory = (
     else Path(getcwd()).joinpath(download_dir)
 )
 
-print(ref_directory)
-
 
 @static_app.get("/file/<path:name>")
 def send_static_file(name):
@@ -24,4 +24,4 @@ def send_static_file(name):
 
 
 if __name__ == "__main__":
-    static_app.run()
+    static_app.run(host="0.0.0.0", port=8080)

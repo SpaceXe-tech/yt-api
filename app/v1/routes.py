@@ -22,7 +22,7 @@ download = Download(
     yt=yt,
     working_directory=download_dir,
     clear_temps=loaded_config.clear_temps,
-    file_prefix=loaded_config.filename_prefix,
+    filename_prefix=loaded_config.filename_prefix,
 )
 
 po_kwargs = dict(
@@ -69,7 +69,7 @@ def get_video_metadata(
 ) -> models.VideoMetadataResponse:
     extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
-        extracted_info, ext=payload.extension
+        extracted_info, ext=loaded_config.default_extension
     )
     updated_video_formats = yt.update_audio_video_size(video_formats)
     audio_formats = []
@@ -91,8 +91,11 @@ def get_video_metadata(
             )
     return models.VideoMetadataResponse(
         id=extracted_info.id,
-        title=sanitize_filename(extracted_info.title),
-        ext=payload.extension,
+        title=extracted_info.title,
+        channel=extracted_info.channel,
+        upload_date=extracted_info.upload_date,
+        uploader_url=extracted_info.uploader_url,
+        duration_string=extracted_info.duration_string,
         thumbnail=f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
         audio=audio_formats,
         video=video_formats,
@@ -106,7 +109,7 @@ def process_video_for_download(
 ) -> models.MediaDownloadResponse:
     extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
     video_formats = yt.get_videos_quality_by_extension(
-        extracted_info, ext=payload.extension
+        extracted_info, ext=loaded_config.default_extension
     )
     saved_to: Path = download.run(
         title=extracted_info.title,

@@ -1,7 +1,7 @@
 python-dotenv==1.0.0
 fastapi[standard]==0.115.5
 pytubefix==8.8.1
-yt-dlp-bonus>=0.0.4
+yt-dlp-bonus>=0.0.7
 sqlmodel>=0.0.22
 a2wsgi>=1.10.7
 uwsgi>=2.0.28

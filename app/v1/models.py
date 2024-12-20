@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional, Literal
 from yt_dlp_bonus.constants import mediaQualitiesType, audioBitratesType
+from datetime import datetime
 
 
 class SearchVideosResponse(BaseModel):
@@ -100,12 +101,9 @@ class VideoDownloadPayload(BaseModel):
 
 class VideoMetadataPayload(BaseModel):
     url: HttpUrl = Field(description="Link to the Youtube video")
-    extension: Literal["mp4", "webm"] = "mp4"
 
     model_config = {
-        "json_schema_extra": {
-            "example": {"url": "https://youtu.be/lw5tB9LQQVM", "extension": "mp4"}
-        }
+        "json_schema_extra": {"example": {"url": "https://youtu.be/lw5tB9LQQVM"}}
     }
 
 
@@ -114,36 +112,40 @@ class VideoMetadataResponse(BaseModel):
         quality: str  # mediaQualitiesType
         size: str
 
-    title: str
     id: str
+    title: str
+    channel: str
+    upload_date: datetime
+    uploader_url: str
+    duration_string: str
     thumbnail: HttpUrl
-    ext: Literal["webm", "mp4"]
     audio: list[MediaMetadata]
     video: list[MediaMetadata]
 
     model_config = {
         "json_schema_extra": {
-            "example": {
-                "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
-                "id": "lw5tB9LQQVM",
-                "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
-                "ext": "mp4",
-                "audio": [
-                    {"quality": "ultralow", "size": "0.68 MB"},
-                    {"quality": "low", "size": "1.32 MB"},
-                    {"quality": "medium", "size": "2.6 MB"},
-                ],
-                "video": [
-                    {"quality": "144p", "size": "4.23 MB"},
-                    {"quality": "240p", "size": "6.36 MB"},
-                    {"quality": "360p", "size": "9.91 MB"},
-                    {"quality": "480p", "size": "15.38 MB"},
-                    {"quality": "720p", "size": "25.57 MB"},
-                    {"quality": "1080p", "size": "53.65 MB"},
-                    {"quality": "1440p", "size": "135.26 MB"},
-                    {"quality": "2160p", "size": "263.94 MB"},
-                ],
-            }
+            "id": "lw5tB9LQQVM",
+            "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
+            "channel": "MariooOfficial",
+            "upload_date": "1970-08-23T06:28:47Z",
+            "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
+            "duration_string": "2:34",
+            "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
+            "audio": [
+                {"quality": "ultralow", "size": "0.68 MB"},
+                {"quality": "low", "size": "1.32 MB"},
+                {"quality": "medium", "size": "2.6 MB"},
+            ],
+            "video": [
+                {"quality": "144p", "size": "4.14 MB"},
+                {"quality": "240p", "size": "5.99 MB"},
+                {"quality": "360p", "size": "10.43 MB"},
+                {"quality": "480p", "size": "14.88 MB"},
+                {"quality": "720p", "size": "31.64 MB"},
+                {"quality": "1080p", "size": "52.14 MB"},
+                {"quality": "1440p", "size": "171.99 MB"},
+                {"quality": "2160p", "size": "342.56 MB"},
+            ],
         }
     }
 
@@ -152,7 +154,6 @@ class MediaDownloadProcessPayload(BaseModel):
 
     url: HttpUrl = Field(description="Link to the Youtube video")
     quality: mediaQualitiesType
-    extension: Literal["mp4", "webm"] = "mp4"
     audio_bitrates: audioBitratesType | None = None
     audio_only: bool = False
 
@@ -161,7 +162,6 @@ class MediaDownloadProcessPayload(BaseModel):
             "example": {
                 "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
                 "quality": "480p",
-                "extension": "mp4",
                 "audio_bitrates": "128k",
                 "audio_only": False,
             }
@@ -182,9 +182,9 @@ class MediaDownloadResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "is_success": True,
-                "filename": "Joel Lwaga - Olodumare (Official Lyric Video) 240p.mp4",
-                "filesize": "6.29 MB",
-                "link": "http://localhost:8000/static/media/Joel_Lwaga_-_Olodumare_(Official_Lyric_Video)_240p.mp4",
+                "filename": "Alan Walker - Alone 1080p.mp4",
+                "filesize": "35.37 MB",
+                "link": "http://localhost:8000/static/file/Alan%20Walker%20-%20Alone%201080p.mp4",
             }
         }
     }
