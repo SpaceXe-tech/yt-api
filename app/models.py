@@ -43,6 +43,7 @@ class EnvVariables(BaseModel):
     continuedl: Optional[bool] = False
     noprogress: Optional[bool] = True
     nopart: Optional[bool] = False
+    concurrent_fragment_downloads: Optional[int] = 1
     # YoutubeDL params
     verbose: Optional[bool] = None
     quiet: Optional[bool] = None
@@ -55,7 +56,8 @@ class EnvVariables(BaseModel):
     def ytdlp_params(self) -> dict[str, int | bool | None]:
         params = dict(
             cookiefile=self.cookiefile,
-            http_chunk_size=self.http_chunk_size,
+            # http_chunk_size=self.http_chunk_size, # activating this makes
+            # download speed so slow. Consider giving it a fix.
             updatetime=self.updatetime,
             buffersize=self.buffersize,
             ratelimit=self.ratelimit,
@@ -67,12 +69,15 @@ class EnvVariables(BaseModel):
             continuedl=self.continuedl,
             noprogress=self.noprogress,
             nopart=self.nopart,
+            concurrent_fragment_downloads=self.concurrent_fragment_downloads,
             verbose=self.verbose,
             quiet=self.quiet,
             allow_multiple_video_streams=self.allow_multiple_video_streams,
             allow_multiple_audio_streams=self.allow_multiple_audio_streams,
             geo_bypass=self.geo_bypass,
-            geo_bypass_country=self.geo_bypass_country,
+            eo_bypass_country=self.geo_bypass_country,
+            keep_fragments=False,
+            fragment_retries=2,
         )
         if self.proxy:
             # Pasing proxy with null value makes download to fail
@@ -98,6 +103,7 @@ class EnvVariables(BaseModel):
                 }
             else:
                 raise ValueError(f"po_token requires either cookiefile or visitorData.")
+
         return params
 
     @field_validator("working_directory")
