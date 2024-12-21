@@ -30,10 +30,7 @@ class VideoInfo(SQLModel, table=True):
 
     @property
     def extracted_info(self) -> ExtractedInfo:
-        info_dict: dict = loads(self.info)
-        info_dict["_format_sort_fields"] = info_dict["format_sort_fields"]
-        info_dict.pop("format_sort_fields")
-        return ExtractedInfo(**info_dict)
+        return ExtractedInfo(**loads(self.info))
 
 
 def create_tables():

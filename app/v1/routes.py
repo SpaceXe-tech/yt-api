@@ -4,7 +4,6 @@ from app.v1.utils import get_extracted_info
 from app.utils import (
     router_exception_handler,
     get_absolute_link_to_static_file,
-    sanitize_filename,
 )
 from app.config import loaded_config, download_dir
 from pathlib import Path

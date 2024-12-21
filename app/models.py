@@ -79,6 +79,26 @@ class EnvVariables(BaseModel):
             params["proxy"] = self.proxy
         if self.enable_logging:
             params["logger"] = logging.getLogger(__name__)
+        if self.po_token:
+            if self.cookiefile:
+                params["extractor_args"] = {
+                    "youtube": {
+                        "player_client": ["web", "default"],
+                        "po_token": [f"web+{self.po_token}"],
+                    }
+                }
+            elif self.visitorData:
+                params["extractor_args"] = {
+                    "youtube": {
+                        "player_client": ["web", "default"],
+                        "player_skip": ["webpage", "configs"],
+                        "po_token": [f"web+{self.po_token}"],
+                        "visitor_data": [self.visitorData],
+                    }
+                }
+            else:
+                raise ValueError(f"po_token requires either cookiefile or visitorData.")
+        return params
 
     @field_validator("working_directory")
     def validate_working_directory(value):
