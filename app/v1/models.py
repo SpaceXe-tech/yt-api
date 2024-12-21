@@ -8,7 +8,8 @@ class SearchVideosResponse(BaseModel):
 
     class VideoMetadata(BaseModel):
         title: str = Field(description="Video title as in Youtube")
-        url: HttpUrl = Field(description="Link to the Youtube video")
+        id: str = Field(description="Video id")
+        duration: int = Field(description="Video's running time in seconds.")
 
     query: str = Field(description="Search query")
     results: list[VideoMetadata]
@@ -20,23 +21,28 @@ class SearchVideosResponse(BaseModel):
                 "results": [
                     {
                         "title": "Adele - Hello (Official Music Video)",
-                        "url": "https://youtube.com/watch?v=YQHsXMglC9A",
-                    },
-                    {
-                        "title": "FATIMA ALTIERI- HELLO- ( OFFICIAL MUSIC VIDEO)",
-                        "url": "https://youtube.com/watch?v=X_jX3D9lCCM",
-                    },
-                    {
-                        "title": "Hello (Folklore Riddim) | Kes | Soca 2018 (AdvoKit Productions x Julianspromo)",
-                        "url": "https://youtube.com/watch?v=Nh_iSHsVsPA",
-                    },
-                    {
-                        "title": "Aqyila - Hello (Official Audio)",
-                        "url": "https://youtube.com/watch?v=k5t0RrijpHg",
+                        "id": "YQHsXMglC9A",
+                        "duration": 367,
                     },
                     {
                         "title": "Adele - Hello (Lyrics)",
-                        "url": "https://youtube.com/watch?v=be12BC5pQLE",
+                        "id": "be12BC5pQLE",
+                        "duration": 296,
+                    },
+                    {
+                        "title": "Lionel Richie - Hello (Official Music Video)",
+                        "id": "mHONNcZbwDY",
+                        "duration": 326,
+                    },
+                    {
+                        "title": "Hello! | Kids Greeting Song and Feelings Song | Super Simple Songs",
+                        "id": "tVlcKp3bWH8",
+                        "duration": 78,
+                    },
+                    {
+                        "title": "Hello Song for Kids | Greeting Song for Kids | The Singing Walrus",
+                        "id": "gghDRJVxFxU",
+                        "duration": 131,
                     },
                 ],
             }
@@ -44,63 +50,43 @@ class SearchVideosResponse(BaseModel):
     }
 
 
-class SearchVideosResponseUrlsOnly(BaseModel):
-
-    class VideoMetadata(BaseModel):
-        url: HttpUrl = Field(description="Link to the Youtube video")
+class SearchVideosUrlResponse(BaseModel):
 
     query: str = Field(description="Search query")
-    results: list[VideoMetadata]
+    videos: list[str] = Field(description="Youtube videos id")
+    shorts: list[str] = Field(description="Short videos id")
 
     model_config = {
-        "json_config_extras": {
+        "json_config_extra": {
             "example": {
-                "query": "hello",
-                "results": [
-                    {"url": "https://youtube.com/watch?v=YQHsXMglC9A"},
-                    {"url": "https://youtube.com/watch?v=k5t0RrijpHg"},
-                    {"url": "https://youtube.com/watch?v=X_jX3D9lCCM"},
-                    {"url": "https://youtube.com/watch?v=mHONNcZbwDY"},
-                    {"url": "https://youtube.com/watch?v=Nh_iSHsVsPA"},
-                    {"url": "https://youtube.com/watch?v=be12BC5pQLE"},
-                    {"url": "https://youtube.com/watch?v=eldeaIAv_wE"},
-                    {"url": "https://youtube.com/watch?v=8zDSikCh96c"},
-                    {"url": "https://youtube.com/watch?v=-YV58L-jDsY"},
-                    {"url": "https://youtube.com/watch?v=ZGCQ2jkq5O0"},
+                "query": "Alan Walker songs",
+                "videos": [
+                    "Wr1KbcjIW8Q",
+                    "1-xGerv5FOk",
+                    "ejbVsbrKd9U",
+                    "60ItHLz5WEA",
+                    "isVzVPpx3zc",
+                    "gYrjTLVfJyM",
+                    "kyLuzKbgXAs",
+                    "M-P4QBt-FWw",
+                ],
+                "shorts": [
+                    "uebrUqs6K50",
+                    "t9qrSfSxP00",
+                    "W9eSwb8zB7I",
+                    "EjTswBdO7LA",
+                    "AW5S4xSJBh0",
+                    "14nKFaaogMU",
+                    "nz3gXdAEG7k",
+                    "uWI3yy9Qf54",
                 ],
             }
-        }
-    }
-
-
-class VideoDownloadPayload(BaseModel):
-
-    url: HttpUrl = Field(description="Link to the Youtube video")
-    format: Literal["mp4", "m4a"] = Field(description="Video or audio")
-    quality: Literal["normal", "best"] = Field(
-        "best", description="Video download quality"
-    )
-
-    model_config = {
-        "json_config_extras": {
-            "example": [
-                {
-                    "url": "https://youtu.be/S3wsCRJVUyg",
-                    "format": "mp4",
-                    "quality": "best",
-                },
-                {
-                    "url": "https://youtu.be/S3wsCRJVUyg",
-                    "format": "m4a",
-                    "quality": "normal",
-                },
-            ]
         }
     }
 
 
 class VideoMetadataPayload(BaseModel):
-    url: HttpUrl = Field(description="Link to the Youtube video")
+    url: str = Field(description="Link to the Youtube video or video id")
 
     model_config = {
         "json_schema_extra": {"example": {"url": "https://youtu.be/lw5tB9LQQVM"}}
@@ -154,7 +140,7 @@ class VideoMetadataResponse(BaseModel):
 
 class MediaDownloadProcessPayload(BaseModel):
 
-    url: HttpUrl = Field(description="Link to the Youtube video")
+    url: str = Field(description="Link to the Youtube video or video id")
     quality: mediaQualitiesType
     audio_bitrates: audioBitratesType | None = None
     audio_only: bool = False
@@ -176,8 +162,8 @@ class MediaDownloadResponse(BaseModel):
     is_success: bool = Field(description="Download successful status")
     filename: Optional[str] = None
     filesize: str
-    link: Optional[HttpUrl] = Field(
-        None, description="Link pointing to downloadable media file"
+    link: Optional[str] = Field(
+        description="Link pointing to downloadable media file or video id"
     )
 
     model_config = {

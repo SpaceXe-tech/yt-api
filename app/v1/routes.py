@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Query, Request
+from fastapi.responses import StreamingResponse
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
 from app.utils import (
@@ -9,11 +10,13 @@ from app.config import loaded_config, download_dir
 from pathlib import Path
 from pytubefix import Search
 from os import path
+from json import dumps
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
 from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
+import typing as t
 
-router = APIRouter()
+router = APIRouter(prefix="/v1")
 
 yt = YoutubeDLBonus(params=loaded_config.ytdlp_params)
 
@@ -31,35 +34,93 @@ po_kwargs = dict(
 )
 
 
+def search_videos_and_yield_results(
+    query: str, limit: int
+) -> t.Generator[dict, None, None]:
+    """Search youtube video and yield results
+
+    Args:
+        query (str): Search paramter.
+        limit (int): Results amount not to exceed.
+
+    Yields:
+        Iterator[t.Generator[dict, None, None]]: title, id & length.
+    """
+    for count, video in enumerate(Search(query, **po_kwargs).videos, start=1):
+        yield dict(title=video.title, id=video.video_id, duration=video.length)
+        if count >= limit:
+            break
+
+
+def generate_streaming_search_results(query: str, limit: int) -> t.Generator[str]:
+    """Performs a search, encode and yield results
+
+    Args:
+        query (str): Search parameter.
+        limit (int): Results amount not to exceed.
+
+    Yields:
+        Iterator[t.Generator, None, None]: Video info (one video).
+    """
+    for video in search_videos_and_yield_results(query, limit):
+        complete_vido_info = dict(query=query, results=[video])
+        yield dumps(complete_vido_info) + "\n"
+
+
 @router.get("/search", name="Search videos")
 @router_exception_handler
 def search_videos(
     q: str = Query(description="Video title"),
-    # limit: int = Query(10, gt=0, le=loaded_config.search_limit, description="Search results limit"),
+    limit: int = Query(
+        10,
+        gt=0,
+        le=loaded_config.search_limit,
+        description="Videos amount not to exceed.",
+    ),
 ) -> models.SearchVideosResponse:
     """Search videos"""
     videos_found_container = []
-    video_count = 0
-    for video in Search(q, **po_kwargs).videos:
-        videos_found_container.append(
-            dict(title=video.title, url=video.watch_url, duration=video.length)
-        )
-        video_count += 1
-        if video_count == loaded_config.search_limit:
-            break
+    for video in search_videos_and_yield_results(query=q, limit=limit):
+        videos_found_container.append(video)
     return models.SearchVideosResponse(query=q, results=videos_found_container)
+
+
+@router.get("/search/stream", name="Search videos")
+@router_exception_handler
+def search_videos(
+    q: str = Query(description="Video title"),
+    limit: int = Query(
+        10,
+        gt=0,
+        le=loaded_config.search_limit,
+        description="Videos amount not to exceed.",
+    ),
+) -> t.Annotated[StreamingResponse, models.SearchVideosResponse]:
+    """Search videos and yield results"""
+
+    return StreamingResponse(
+        content=generate_streaming_search_results(query=q, limit=limit),
+        media_type="text/event-stream",
+    )
 
 
 @router.get("/search/url", name="Search videos (url)")
 @router_exception_handler
 def search_videos(
     q: str = Query(description="Video title"),
-) -> models.SearchVideosResponseUrlsOnly:
+    limit: int = Query(
+        50, description="Results amount not to exceed per category", gt=0
+    ),
+) -> models.SearchVideosUrlResponse:
     """Search videos and return video urls only"""
-    videos_found_container = []
-    for video in Search(q, **po_kwargs).videos:
-        videos_found_container.append(dict(url=video.watch_url))
-    return models.SearchVideosResponseUrlsOnly(query=q, results=videos_found_container)
+    search = Search(q, **po_kwargs)
+    videos_found = [video.video_id for video in search.videos]
+    shorts_found = [short.video_id for short in search.shorts]
+    return models.SearchVideosUrlResponse(
+        query=q,
+        videos=videos_found[:limit] if len(videos_found) > limit else videos_found,
+        shorts=shorts_found[:limit] if len(shorts_found) > limit else shorts_found,
+    )
 
 
 @router.post("/metadata", name="Video metadata")
@@ -67,7 +128,7 @@ def search_videos(
 def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
-    extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
+    extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=loaded_config.default_extension
     )
@@ -107,7 +168,7 @@ def get_video_metadata(
 def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
-    extracted_info = get_extracted_info(yt=yt, url=str(payload.url))
+    extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=loaded_config.default_extension
     )

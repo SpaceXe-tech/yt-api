@@ -15,7 +15,7 @@ from app.v1 import v1_router
 
 app = FastAPI(
     title="Youtube-Downloader",
-    version="0.0.4",
+    version="0.0.5",
     summary="Download Youtube videos in mp4, webm and mp3 formats.",
     description="_Under development_",
     terms_of_service="",
@@ -33,7 +33,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
-app.include_router(v1_router, prefix="/v1", tags=["v1"])
+app.include_router(v1_router, prefix="/api", tags=["v1"])
 # app.mount("/static", StaticFiles(directory=temp_dir, check_dir=False), name="static")
 
 if not loaded_config.static_server_url:

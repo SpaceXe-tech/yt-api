@@ -14,27 +14,39 @@ def run_startup_events():
 run_startup_events()
 
 
-def test_video_search():
-    resp = client.get("/v1/search", params=dict(q="Hello"))
+@pytest.mark.parametrize(["query", "limit"], [("hello", 2), ("hey", 1)])
+def test_video_search(query, limit):
+    resp = client.get("/api/v1/search", params=dict(q=query, limit=limit))
     assert resp.is_success
-    models.SearchVideosResponse(**resp.json())
+    videos = models.SearchVideosResponse(**resp.json())
+    assert len(videos.results) <= limit
 
 
-def test_video_search_urls_only():
-    resp = client.get("/v1/search/url", params=dict(q="Hello"))
+@pytest.mark.parametrize(["query", "limit"], [("hello", 2), ("hey", 1)])
+def test_stream_video_search(query, limit):
+    resp = client.get("/api/v1/search/stream", params=dict(q=query, limit=limit))
     assert resp.is_success
-    models.SearchVideosResponseUrlsOnly(**resp.json())
+    assert len(resp.text.split("\n")) <= limit + 1
+
+
+@pytest.mark.parametrize(["query", "limit"], [("hello", 3), ("hey", 4)])
+def test_video_search_urls_only(query, limit):
+    resp = client.get("/api/v1/search/url", params=dict(q=query, limit=limit))
+    assert resp.is_success
+    videos = models.SearchVideosUrlResponse(**resp.json())
+    assert len(videos.shorts) <= limit
 
 
 @pytest.mark.parametrize(
     ["url"],
     [
-        ("https://youtu.be/lw5tB9LQQVM"),
-        ("https://youtu.be/lw5tB9LQQVM"),
+        ("https://youtu.be/lw5tB9LQQVM",),
+        ("lw5tB9LQQVM",),
+        ("https://www.youtube.com/watch?v=TfiT3uytyV0",),
     ],
 )
-def test_video_metadata(url, extension):
-    resp = client.post("/v1/metadata", json=dict(url=url))
+def test_video_metadata(url):
+    resp = client.post("/api/v1/metadata", json=dict(url=url))
     assert resp.is_success
     models.VideoMetadataResponse(**resp.json())
 
@@ -50,7 +62,7 @@ def test_video_metadata(url, extension):
 )
 def test_download_processing(url, quality, audio_bitrates, audio_only):
     resp = client.post(
-        "/v1/download",
+        "/api/v1/download",
         json=dict(
             url=url,
             quality=quality,
@@ -63,15 +75,15 @@ def test_download_processing(url, quality, audio_bitrates, audio_only):
 
 
 @pytest.mark.parametrize(
-    ["url", "quality", "extension", "audio_bitrates", "audio_only"],
+    ["url", "quality", "audio_bitrates", "audio_only"],
     [
         ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k", True),
+        ("S3wsCRJVUyg", "medium", "192k", True),
     ],
 )
 def test_download_media(url, quality, audio_bitrates, audio_only):
     resp = client.post(
-        "/v1/download",
+        "/api/v1/download",
         json=dict(
             url=url,
             quality=quality,
@@ -81,6 +93,6 @@ def test_download_media(url, quality, audio_bitrates, audio_only):
     )
     assert resp.is_success
     media = models.MediaDownloadResponse(**resp.json())
-    # These will raise 404 since the static contents are served by flask (wsgi).
+    # This will raise 404 since the static contents are served by flask (wsgi).
     # static_resp = client.get(str(media.link))
     # assert static_resp.is_success
