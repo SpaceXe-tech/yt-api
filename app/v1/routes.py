@@ -7,7 +7,7 @@ from app.utils import (
 )
 from app.config import loaded_config, download_dir
 from pathlib import Path
-from pytubefix import Search, YouTube
+from pytubefix import Search
 from os import path
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
@@ -35,6 +35,7 @@ po_kwargs = dict(
 @router_exception_handler
 def search_videos(
     q: str = Query(description="Video title"),
+    # limit: int = Query(10, gt=0, le=loaded_config.search_limit, description="Search results limit"),
 ) -> models.SearchVideosResponse:
     """Search videos"""
     videos_found_container = []
