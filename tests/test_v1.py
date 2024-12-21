@@ -27,34 +27,33 @@ def test_video_search_urls_only():
 
 
 @pytest.mark.parametrize(
-    ["url", "extension"],
+    ["url"],
     [
-        ("https://youtu.be/lw5tB9LQQVM", "mp4"),
-        ("https://youtu.be/lw5tB9LQQVM", "webm"),
+        ("https://youtu.be/lw5tB9LQQVM"),
+        ("https://youtu.be/lw5tB9LQQVM"),
     ],
 )
 def test_video_metadata(url, extension):
-    resp = client.post("/v1/metadata", json=dict(url=url, extension=extension))
+    resp = client.post("/v1/metadata", json=dict(url=url))
     assert resp.is_success
     models.VideoMetadataResponse(**resp.json())
 
 
 @pytest.mark.parametrize(
-    ["url", "quality", "extension", "audio_bitrates", "audio_only"],
+    ["url", "quality", "audio_bitrates", "audio_only"],
     [
-        ("https://youtu.be/S3wsCRJVUyg", "1080p", "mp4", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "720p", "webm", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "medium", "webm", "192k", True),
-        ("https://youtu.be/S3wsCRJVUyg", "low", "mp4", "320k", True),
+        ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "720p", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k", True),
+        ("https://youtu.be/S3wsCRJVUyg", "low", "320k", True),
     ],
 )
-def test_download_processing(url, quality, extension, audio_bitrates, audio_only):
+def test_download_processing(url, quality, audio_bitrates, audio_only):
     resp = client.post(
         "/v1/download",
         json=dict(
             url=url,
             quality=quality,
-            extension=extension,
             audio_bitrates=audio_bitrates,
             audio_only=audio_only,
         ),
@@ -66,17 +65,16 @@ def test_download_processing(url, quality, extension, audio_bitrates, audio_only
 @pytest.mark.parametrize(
     ["url", "quality", "extension", "audio_bitrates", "audio_only"],
     [
-        ("https://youtu.be/S3wsCRJVUyg", "1080p", "mp4", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "medium", "webm", "192k", True),
+        ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k", True),
     ],
 )
-def test_download_media(url, quality, extension, audio_bitrates, audio_only):
+def test_download_media(url, quality, audio_bitrates, audio_only):
     resp = client.post(
         "/v1/download",
         json=dict(
             url=url,
             quality=quality,
-            extension=extension,
             audio_bitrates=audio_bitrates,
             audio_only=audio_only,
         ),
