@@ -87,9 +87,9 @@ def search_videos(
     return models.SearchVideosResponse(query=q, results=videos_found_container)
 
 
-@router.get("/search/stream", name="Search videos")
+@router.get("/search/stream", name="Search videos (stream)")
 @router_exception_handler
-def search_videos(
+def search_videos_and_stream(
     q: str = Query(description="Video title"),
     limit: int = Query(
         10,
@@ -98,7 +98,7 @@ def search_videos(
         description="Videos amount not to exceed.",
     ),
 ) -> t.Annotated[StreamingResponse, models.SearchVideosResponse]:
-    """Search videos and yield results"""
+    """Search videos and stream results"""
 
     return StreamingResponse(
         content=generate_streaming_search_results(query=q, limit=limit),
