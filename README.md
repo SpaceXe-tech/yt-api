@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a step-by-step guide for installing and using the YouTube video downloader application. The tool allows users to download YouTube videos in mp4, webm, and mp3 formats.
+This document provides a step-by-step guide for installing and using the YouTube video downloader application. This allows users to download YouTube videos in mp4, webm, and mp3 formats.
 
 ## Prerequisites
 
