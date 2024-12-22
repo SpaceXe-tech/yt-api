@@ -52,7 +52,9 @@ def search_videos_and_yield_results(
             break
 
 
-def generate_streaming_search_results(query: str, limit: int) -> t.Generator[str]:
+def generate_streaming_search_results(
+    query: str, limit: int
+) -> t.Generator[str, None, None]:
     """Performs a search, encode and yield results
 
     Args:
