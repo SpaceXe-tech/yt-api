@@ -130,6 +130,7 @@ def search_videos(
 def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
+    """Data of a specific video"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=loaded_config.default_extension
@@ -159,7 +160,7 @@ def get_video_metadata(
         upload_date=extracted_info.upload_date,
         uploader_url=extracted_info.uploader_url,
         duration_string=extracted_info.duration_string,
-        thumbnail=f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
+        thumbnail=extracted_info.thumbnail,  # f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
         audio=audio_formats,
         video=video_formats,
     )
@@ -170,6 +171,7 @@ def get_video_metadata(
 def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
+    """Initiate download processing"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_videos_quality_by_extension(
         extracted_info, ext=loaded_config.default_extension
