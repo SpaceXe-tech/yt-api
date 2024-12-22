@@ -68,6 +68,9 @@ To improve server performance and minimize load, I recommend setting up a separa
 1. Execute the `static_server.py` file.
 2. Configure the API using the `static_server_url` key with the URL of the static server.
 
+> [!IMPORTANT]
+> It's recommened to use a [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) to serve the static contents at production environment. This [uwsgi.sh](uwsgi.sh) file might come handy in this.
+
 ## Troubleshooting
 
 ### Authorization Issues
