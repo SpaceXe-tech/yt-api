@@ -56,6 +56,11 @@ Finally, start the server using the following command:
 make runserver
 ```
 
+> [!TIP]
+> For a more smoother control over the server's startup, consider using the FastAPI's cli.
+> Running `fastapi run app` will equally fire-up the server.
+> For more help info such as changing **host** and **port**, you can simply run `fastapi run --help`.
+
 ## Optimizing Server Performance
 
 To improve server performance and minimize load, I recommend setting up a separate server for handling static contents (audios and videos). To do this:
