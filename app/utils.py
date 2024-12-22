@@ -8,7 +8,11 @@ import typing as t
 from functools import wraps
 from fastapi import HTTPException
 from fastapi import status
-from yt_dlp_bonus.exceptions import UserInputError
+from yt_dlp_bonus.exceptions import (
+    UserInputError,
+    FileSizeOutOfRange,
+    UknownDownloadFailure,
+)
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
 from app.config import download_dir, loaded_config
@@ -49,7 +53,13 @@ def router_exception_handler(func: t.Callable):
         try:
             resp = func(*args, **kwargs)
             return resp
-        except (AssertionError, UserInputError, InvalidVideoUrl) as e:
+        except (
+            AssertionError,
+            UserInputError,
+            InvalidVideoUrl,
+            FileSizeOutOfRange,
+            UknownDownloadFailure,
+        ) as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         except Exception as e:
             logger.exception(e)

@@ -132,7 +132,7 @@ def get_video_metadata(
 ) -> models.VideoMetadataResponse:
     """Get data of a specific video"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
-    video_formats = yt.get_videos_quality_by_extension(
+    video_formats = yt.get_video_qualities_with_extension(
         extracted_info, ext=loaded_config.default_extension
     )
     updated_video_formats = yt.update_audio_video_size(video_formats)
@@ -173,7 +173,7 @@ def process_video_for_download(
 ) -> models.MediaDownloadResponse:
     """Initiate download processing"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
-    video_formats = yt.get_videos_quality_by_extension(
+    video_formats = yt.get_video_qualities_with_extension(
         extracted_info, ext=loaded_config.default_extension
     )
     saved_to: Path = download.run(

@@ -80,10 +80,14 @@ class EnvVariables(BaseModel):
             fragment_retries=2,
         )
         if self.proxy:
-            # Pasing proxy with null value makes download to fail
+            # Passing proxy with null value makes download to fail
             params["proxy"] = self.proxy
         if self.enable_logging:
-            params["logger"] = logging.getLogger(__name__)
+            params["logger"] = logging.getLogger("uvicorn")
+        if self.quiet:
+            # Assumes it's running in production mode
+            logging.getLogger("yt_dlp_bonus").setLevel(logging.ERROR)
+            logging.getLogger("yt_dlp").setLevel(logging.ERROR)
         if self.po_token:
             if self.cookiefile:
                 params["extractor_args"] = {
