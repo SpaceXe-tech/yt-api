@@ -15,7 +15,7 @@ from app.v1 import v1_router
 
 app = FastAPI(
     title="Youtube-Downloader",
-    version="0.0.5",
+    version="0.0.5.1",
     summary="Download Youtube videos in mp4, webm and mp3 formats.",
     description="_Under development_",
     terms_of_service="",

@@ -8,7 +8,7 @@ from urllib.parse import unquote
 from os import getcwd
 from pathlib import Path
 
-static_app = Flask(__name__, static_url_path="/xxxxxxx")
+static_app = Flask(__name__, static_url_path="/xxxxxxxx")
 
 ref_directory = (
     download_dir
