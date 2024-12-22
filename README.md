@@ -1,42 +1,80 @@
-<h1 align="center">youtube-downloader</h1>
-Download Youtube Videos in mp4, webm and mp3 formats.
+<h1 align="center">YouTube Video Downloader</h1>
 
-# Pre-requisite
+## Overview
 
-- [Python>=3.10](https://python.org)
+This document provides a step-by-step guide for installing and using the YouTube video downloader application. The tool allows users to download YouTube videos in mp4, webm, and mp3 formats.
 
-# Installation
+## Prerequisites
 
-> [!NOTE]
-> This guide assumes you're running on a *nix system.
+- [Python version 3.10 or higher](https://python.org)
+- [Git](https://git-scm.com/)
 
-1. Clone repo.
+## Installation Guide
+
+This guide assumes you're running on a *nix system. Follow these steps to install and configure the YouTube video downloader:
+
+### Step 1: Clone Repository
+
+First, clone the repository using the following command:
 
 ```sh
-git clone https://github.com/Simatwa/youtube-downloader
+git clone https://github.com/Simatwa/youtube-downloader.git
 cd youtube-downloader
 ```
 
-2. Setup virtual environment and install requirements
+### Step 2: Set Up Virtual Environment
+
+Next, create and activate a virtual environment:
 
 ```sh
 pip install virtualenv
 virtualenv venv
 source venv/bin/activate
+```
+
+After activating the virtual environment, install the required dependencies:
+
+```sh
 make install
 ```
 
-Make the necessary changes to [.env.example](.env.example) file and rename it **.env**.
+### Step 3: Configure Environment Variables
 
-3. Start the server
+Create a copy of the `.env.example` file and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
+
+### Step 4: Start the Server
+
+Finally, start the server using the following command:
 
 ```sh
 make runserver
 ```
 
-> [!TIP]
-> To boost server performance by minimizing the load on it, it's recommended to setup a separate server for serving static contents _(audio and videos)_. To do so, you can simply execute the [static_server.py](static_server.py) file and then pass along the url of the static server to the API's configuration using key `static_server_url`
+## Optimizing Server Performance
 
-# Important links
+To improve server performance and minimize load, I recommend setting up a separate server for handling static contents (audios and videos). To do this:
 
-## [How to extract PO Token](https://github.com/yt-dlp/yt-dlp/wiki/Extractors#po-token-guide)
+1. Execute the `static_server.py` file.
+2. Configure the API using the `static_server_url` key with the URL of the static server.
+
+## Troubleshooting
+
+### Authorization Issues
+
+YouTube flags requests without proper authorization. To work around this issue:
+
+1. Use cookies and po_token as authorized workarounds.
+2. Alternatively, use a proxy from a location exempted from required authorizations (e.g., Canada).
+
+> [!NOTE]
+> While using a proxy is a straightforward solution, there's no guarantee that the request will go through successfully.
+
+## Additional Resources
+
+For detailed information on extracting PO Tokens, refer to the following resource:
+
+[How to extract PO Token](https://github.com/yt-dlp/yt-dlp/wiki/Extractors#po-token-guide)
+
+## License
+
+- [x] [The Unlicense](LICENSE)
