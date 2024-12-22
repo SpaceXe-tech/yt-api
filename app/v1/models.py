@@ -57,7 +57,7 @@ class SearchVideosUrlResponse(BaseModel):
     shorts: list[str] = Field(description="Short videos id")
 
     model_config = {
-        "json_config_extra": {
+        "json_schema_extra": {
             "example": {
                 "query": "Alan Walker songs",
                 "videos": [
@@ -89,7 +89,13 @@ class VideoMetadataPayload(BaseModel):
     url: str = Field(description="Link to the Youtube video or video id")
 
     model_config = {
-        "json_schema_extra": {"example": {"url": "https://youtu.be/lw5tB9LQQVM"}}
+        "json_schema_extra": {
+            "examples": [
+                {"url": "https://youtu.be/lw5tB9LQQVM"},
+                {"url": "https://www.youtube.com/watch?v=lw5tB9LQQVM"},
+                {"url": "lw5tB9LQQVM"},
+            ]
+        }
     }
 
 
@@ -147,12 +153,26 @@ class MediaDownloadProcessPayload(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "example": {
-                "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
-                "quality": "480p",
-                "audio_bitrates": "128k",
-                "audio_only": False,
-            }
+            "examples": [
+                {
+                    "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
+                    "quality": "720p",
+                    "audio_bitrates": "128k",
+                    "audio_only": False,
+                },
+                {
+                    "url": "1-xGerv5FOk",
+                    "quality": "1080p",
+                    "audio_bitrates": "128k",
+                    "audio_only": False,
+                },
+                {
+                    "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
+                    "quality": "medium",
+                    "audio_bitrates": "192k",
+                    "audio_only": True,
+                },
+            ],
         }
     }
 
