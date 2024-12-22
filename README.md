@@ -11,7 +11,10 @@ This document provides a step-by-step guide for installing and using the YouTube
 
 ## Installation Guide
 
-This guide assumes you're running on a *nix system. Follow these steps to install and configure the YouTube video downloader:
+> [!NOTE]
+> This guide assumes you're running on a *nix system.
+
+Follow these steps to install and configure the YouTube video downloader:
 
 ### Step 1: Clone Repository
 
@@ -41,6 +44,9 @@ make install
 ### Step 3: Configure Environment Variables
 
 Create a copy of the `.env.example` file and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
+
+> [!WARNING]
+> Some of the settings in the `.env` file are very sensitive to the app. A slight change can have a significant impact on the apps's functionality. Ensure you're in good knowledge of the changes you will be making.
 
 ### Step 4: Start the Server
 
