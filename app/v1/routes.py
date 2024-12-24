@@ -72,7 +72,7 @@ def generate_streaming_search_results(
 @router.get("/search", name="Search videos")
 @router_exception_handler
 def search_videos(
-    q: str = Query(description="Video title"),
+    q: str = Query(description="Video title or keyword"),
     limit: int = Query(
         10,
         gt=0,
@@ -180,7 +180,7 @@ def process_video_for_download(
         title=extracted_info.title,
         quality=payload.quality,
         quality_infoFormat=video_formats,
-        audio_bitrates=payload.audio_bitrates,
+        audio_bitrate=payload.audio_bitrate,
         audio_only=payload.audio_only,
     )
     filename = saved_to.name

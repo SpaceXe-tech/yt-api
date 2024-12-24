@@ -40,9 +40,9 @@ def test_video_search_urls_only(query, limit):
 @pytest.mark.parametrize(
     ["url"],
     [
-        ("https://youtu.be/lw5tB9LQQVM",),
-        ("lw5tB9LQQVM",),
-        ("https://www.youtube.com/watch?v=TfiT3uytyV0",),
+        ("https://youtu.be/HUGcwe93F9E?si=Ajunj8GlRs-DzKnQ",),
+        ("HUGcwe93F9E",),
+        ("https://www.youtube.com/watch?v=HUGcwe93F9E",),
     ],
 )
 def test_video_metadata(url):
@@ -52,7 +52,7 @@ def test_video_metadata(url):
 
 
 @pytest.mark.parametrize(
-    ["url", "quality", "audio_bitrates", "audio_only"],
+    ["url", "quality", "audio_bitrate", "audio_only"],
     [
         ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
         ("https://youtu.be/S3wsCRJVUyg", "720p", "128k", False),
@@ -60,13 +60,13 @@ def test_video_metadata(url):
         ("https://youtu.be/S3wsCRJVUyg", "low", "320k", True),
     ],
 )
-def test_download_processing(url, quality, audio_bitrates, audio_only):
+def test_download_processing(url, quality, audio_bitrate, audio_only):
     resp = client.post(
         "/api/v1/download",
         json=dict(
             url=url,
             quality=quality,
-            audio_bitrates=audio_bitrates,
+            audio_bitrate=audio_bitrate,
             audio_only=audio_only,
         ),
     )
@@ -75,19 +75,19 @@ def test_download_processing(url, quality, audio_bitrates, audio_only):
 
 
 @pytest.mark.parametrize(
-    ["url", "quality", "audio_bitrates", "audio_only"],
+    ["url", "quality", "audio_bitrate", "audio_only"],
     [
         ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
         ("S3wsCRJVUyg", "medium", "192k", True),
     ],
 )
-def test_download_media(url, quality, audio_bitrates, audio_only):
+def test_download_media(url, quality, audio_bitrate, audio_only):
     resp = client.post(
         "/api/v1/download",
         json=dict(
             url=url,
             quality=quality,
-            audio_bitrates=audio_bitrates,
+            audio_bitrate=audio_bitrate,
             audio_only=audio_only,
         ),
     )

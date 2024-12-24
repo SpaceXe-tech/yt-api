@@ -148,7 +148,7 @@ class MediaDownloadProcessPayload(BaseModel):
 
     url: str = Field(description="Link to the Youtube video or video id")
     quality: mediaQualitiesType
-    audio_bitrates: audioBitratesType | None = None
+    audio_bitrate: audioBitratesType | None = None
     audio_only: bool = False
 
     model_config = {
@@ -157,7 +157,7 @@ class MediaDownloadProcessPayload(BaseModel):
                 {
                     "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
                     "quality": "720p",
-                    "audio_bitrates": "128k",
+                    "audio_bitrate": "128k",
                     "audio_only": False,
                 },
                 {
