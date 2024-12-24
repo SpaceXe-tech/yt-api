@@ -174,14 +174,15 @@ def process_video_for_download(
     """Initiate download processing"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
-        extracted_info, ext=loaded_config.default_extension
+        extracted_info,
+        ext=loaded_config.default_extension,
+        audio_ext="m4a" if payload.quality in audioQualities else "webm",
     )
     saved_to: Path = download.run(
         title=extracted_info.title,
+        qualities_format=video_formats,
         quality=payload.quality,
-        quality_infoFormat=video_formats,
-        audio_bitrate=payload.audio_bitrate,
-        audio_only=payload.audio_only,
+        bitrate=payload.bitrate,
     )
     filename = saved_to.name
 

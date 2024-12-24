@@ -52,22 +52,21 @@ def test_video_metadata(url):
 
 
 @pytest.mark.parametrize(
-    ["url", "quality", "audio_bitrate", "audio_only"],
+    ["url", "quality", "bitrate"],
     [
-        ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "720p", "128k", False),
-        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k", True),
-        ("https://youtu.be/S3wsCRJVUyg", "low", "320k", True),
+        ("https://youtu.be/S3wsCRJVUyg", "1080p", None),
+        ("https://youtu.be/S3wsCRJVUyg", "720p", "128k"),
+        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k"),
+        ("https://youtu.be/S3wsCRJVUyg", "low", None),
     ],
 )
-def test_download_processing(url, quality, audio_bitrate, audio_only):
+def test_download_processing(url, quality, bitrate):
     resp = client.post(
         "/api/v1/download",
         json=dict(
             url=url,
             quality=quality,
-            audio_bitrate=audio_bitrate,
-            audio_only=audio_only,
+            bitrate=bitrate,
         ),
     )
     assert resp.is_success
