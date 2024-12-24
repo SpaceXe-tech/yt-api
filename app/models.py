@@ -1,6 +1,6 @@
 """Global models"""
 
-from pydantic import BaseModel, Field, field_validator, PositiveInt
+from pydantic import BaseModel, Field, field_validator, PositiveInt, EmailStr, HttpUrl
 from typing import Optional, Literal
 from pathlib import Path
 import os
@@ -8,6 +8,16 @@ import logging
 
 
 class EnvVariables(BaseModel):
+    # contacts
+    contact_name: Optional[str] = "Unknown"
+    contact_email: Optional[EmailStr] = "email@localhost.dev"
+    contact_url: Optional[HttpUrl] = "http://localhost:8000/"
+    # API
+    api_description: Optional[str] = ""
+    api_title: Optional[str] = "Youtube-Downloader"
+    api_description: Optional[str] = ""
+    api_terms_of_service: Optional[HttpUrl] = "http://localhost:8000/terms-of-service"
+
     visitorData: Optional[str] = Field(
         None, description="Extracted along with po token"
     )
@@ -110,6 +120,18 @@ class EnvVariables(BaseModel):
 
         return params
 
+    @field_validator("api_description")
+    def validate_api_description(value):
+        if not value:
+            return ""
+        description_path = Path(value)
+        if not description_path.exists() or not description_path.is_file():
+            raise TypeError(
+                f"Invalid value for api_description passed - {value}. Must be a valid path to a file."
+            )
+        with open(value) as fh:
+            return fh.read()
+
     @field_validator("working_directory")
     def validate_working_directory(value):
         working_dir = Path(value)
@@ -134,3 +156,12 @@ class EnvVariables(BaseModel):
 
     def po_token_verifier(self) -> tuple[str, str]:
         return self.visitorData, self.po_token
+
+    @property
+    def contacts(self) -> dict[str, str | EmailStr]:
+        """API' contact details"""
+        return dict(
+            name=self.contact_name,
+            email=str(self.contact_email),
+            url=str(self.contact_url),
+        )

@@ -80,7 +80,9 @@ def search_videos(
         description="Videos amount not to exceed.",
     ),
 ) -> models.SearchVideosResponse:
-    """Search videos"""
+    """Search videos
+    - Search videos matching the query and return whole results at once. It's less faster.
+    """
     videos_found_container = []
     for video in search_videos_and_yield_results(query=q, limit=limit):
         videos_found_container.append(video)
@@ -98,7 +100,9 @@ def search_videos_and_stream(
         description="Videos amount not to exceed.",
     ),
 ) -> t.Annotated[StreamingResponse, models.SearchVideosResponse]:
-    """Search videos and stream results"""
+    """Search videos and stream results.
+    - Yield back each result found just in time. Much faster than `search` endpoint.
+    """
 
     return StreamingResponse(
         content=generate_streaming_search_results(query=q, limit=limit),
@@ -114,7 +118,9 @@ def search_videos(
         50, description="Results amount not to exceed per category", gt=0
     ),
 ) -> models.SearchVideosUrlResponse:
-    """Search videos and return video urls only"""
+    """Search videos and return video urls only
+    - This is much faster than the other search endpoints.
+    """
     search = Search(q, **po_kwargs)
     videos_found = [video.video_id for video in search.videos]
     shorts_found = [short.video_id for short in search.shorts]
@@ -130,7 +136,9 @@ def search_videos(
 def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
-    """Get metadata of a specific video"""
+    """Get metadata of a specific video
+    - The first request will take time but the subsequent ones will be faster as they will be served from cache.
+    """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info, ext=loaded_config.default_extension
@@ -171,7 +179,9 @@ def get_video_metadata(
 def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
-    """Initiate download processing"""
+    """Initiate download processing
+    - To download the file: Add parameter `download` with value `true` to the returned link.
+    """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info,
