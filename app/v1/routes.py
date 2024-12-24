@@ -130,7 +130,7 @@ def search_videos(
 def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
-    """Get data of a specific video"""
+    """Get metadata of a specific video"""
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info, ext=loaded_config.default_extension
