@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from app.events import register_events
 from app.utils import create_temp_dirs
 from app.static import static_app
@@ -49,5 +50,12 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
+app.add_middleware(
+      CORSMiddleware,
+      allow_origins=["*"],
+      allow_credentials=False,
+      allow_methods=["GET", "POST"],
+      allow_headers=["*"],
+  )
 
 app = register_events(app)
