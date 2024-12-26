@@ -1,7 +1,15 @@
 """Global models"""
 
-from pydantic import BaseModel, Field, field_validator, PositiveInt, EmailStr, HttpUrl
-from typing import Optional, Literal
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    PositiveInt,
+    EmailStr,
+    HttpUrl,
+    IPvAnyAddress,
+)
+from typing import Optional, Literal, Union
 from pathlib import Path
 import os
 import logging
@@ -37,6 +45,7 @@ class EnvVariables(BaseModel):
     # static server options
     static_server_url: Optional[str] = None
 
+    download_ip: Union[IPvAnyAddress, str] = None
     # Downloader params - yt_dlp
     enable_logging: Optional[bool] = False
     proxy: Optional[str] = None

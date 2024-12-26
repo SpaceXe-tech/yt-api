@@ -18,7 +18,9 @@ import typing as t
 
 router = APIRouter(prefix="/v1")
 
-yt = YoutubeDLBonus(params=loaded_config.ytdlp_params)
+yt = YoutubeDLBonus(
+    params=loaded_config.ytdlp_params, download_ip=loaded_config.download_ip
+)
 
 download = Download(
     yt=yt,
