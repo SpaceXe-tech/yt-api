@@ -13,7 +13,7 @@ from os import path
 from json import dumps
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
-from yt_dlp_bonus.utils import get_size_in_mb_from_bytes
+from yt_dlp_bonus.utils import get_size_string
 import typing as t
 
 router = APIRouter(prefix="/v1")
@@ -151,14 +151,14 @@ def get_video_metadata(
             audio_formats.append(
                 dict(
                     quality=quality,
-                    size=get_size_in_mb_from_bytes(format.audio_video_size),
+                    size=get_size_string(format.audio_video_size),
                 )
             )
         else:
             video_formats.append(
                 dict(
                     quality=quality,
-                    size=get_size_in_mb_from_bytes(format.audio_video_size),
+                    size=get_size_string(format.audio_video_size),
                 )
             )
     return models.VideoMetadataResponse(
@@ -199,6 +199,6 @@ def process_video_for_download(
     return models.MediaDownloadResponse(
         is_success=True,
         filename=saved_to.name,
-        filesize=get_size_in_mb_from_bytes(path.getsize(saved_to)),
+        filesize=get_size_string(path.getsize(saved_to)),
         link=get_absolute_link_to_static_file(filename, request),
     )
