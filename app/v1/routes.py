@@ -8,12 +8,11 @@ from app.utils import (
 )
 from app.config import loaded_config, download_dir
 from pathlib import Path
-from pytubefix import Search
 from os import path
-from json import dumps
 from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
 from yt_dlp_bonus.utils import get_size_string
+from functools import lru_cache
 import typing as t
 
 router = APIRouter(prefix="/v1")
@@ -29,46 +28,50 @@ download = Download(
     filename_prefix=loaded_config.filename_prefix,
 )
 
-po_kwargs = dict(
-    use_po_token=type(loaded_config.po_token) is not None,
-    po_token_verifier=loaded_config.po_token_verifier,
-    proxies={"https": loaded_config.proxy} if loaded_config.proxy else None,
+from innertube import InnerTube
+from httpx import Proxy
+
+PARAMS_TYPE_VIDEO = "EgIQAQ%3D%3D"
+
+innertube_client = InnerTube(
+    "WEB",
+    "2.20230920.00.00",
+    proxies=None if not loaded_config.proxy else Proxy(loaded_config.proxy),
 )
 
 
-def search_videos_and_yield_results(
-    query: str, limit: int
-) -> t.Generator[dict, None, None]:
-    """Search youtube video and yield results
+@lru_cache(maxsize=100)
+def search_videos_by_key(query: str, limit: int = -1) -> list[dict[str, str]]:
+    """Perform a video search.
 
     Args:
-        query (str): Search paramter.
-        limit (int): Results amount not to exceed.
+        query (str): Search keyword
+        limit (int): Total results not to exceed. Defaults to -1 (No limit).
 
-    Yields:
-        Iterator[t.Generator[dict, None, None]]: title, id & length.
+    Returns:
+        list[dict[str, str]]: Sorted shallow results.
     """
-    for count, video in enumerate(Search(query, **po_kwargs).videos, start=1):
-        yield dict(title=video.title, id=video.video_id, duration=video.length)
-        if count >= limit:
-            break
-
-
-def generate_streaming_search_results(
-    query: str, limit: int
-) -> t.Generator[str, None, None]:
-    """Performs a search, encode and yield results
-
-    Args:
-        query (str): Search parameter.
-        limit (int): Results amount not to exceed.
-
-    Yields:
-        Iterator[t.Generator, None, None]: Video info (one video).
-    """
-    for video in search_videos_and_yield_results(query, limit):
-        complete_vido_info = dict(query=query, results=[video])
-        yield dumps(complete_vido_info) + "\n"
+    video_search_results = innertube_client.search(query, params=PARAMS_TYPE_VIDEO)
+    video_metadata_container: list[dict] = []
+    contents = video_search_results["contents"]["twoColumnSearchResultsRenderer"][
+        "primaryContents"
+    ]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
+    count = 0
+    for content in contents:
+        try:
+            video = content["videoRenderer"]
+            video_id = video["videoId"]
+            video_title = video["title"]["runs"][0]["text"]
+            video_duration = video["lengthText"]["simpleText"]
+            video_metadata_container.append(
+                dict(id=video_id, title=video_title, duration=video_duration)
+            )
+            count += 1
+            if count == limit:
+                break
+        except:  # KeyError etc
+            pass
+    return video_metadata_container
 
 
 @router.get("/search", name="Search videos")
@@ -83,53 +86,11 @@ def search_videos(
     ),
 ) -> models.SearchVideosResponse:
     """Search videos
-    - Search videos matching the query and return whole results at once. It's less faster.
+    - Search videos matching the query and return whole results at once.
+    - Serves from cache similar `99` subsequent queries.
     """
-    videos_found_container = []
-    for video in search_videos_and_yield_results(query=q, limit=limit):
-        videos_found_container.append(video)
-    return models.SearchVideosResponse(query=q, results=videos_found_container)
-
-
-@router.get("/search/stream", name="Search videos (stream)")
-@router_exception_handler
-def search_videos_and_stream(
-    q: str = Query(description="Video title"),
-    limit: int = Query(
-        10,
-        gt=0,
-        le=loaded_config.search_limit,
-        description="Videos amount not to exceed.",
-    ),
-) -> t.Annotated[StreamingResponse, models.SearchVideosResponse]:
-    """Search videos and stream results.
-    - Yield back each result found just in time. Much faster than `search` endpoint.
-    """
-
-    return StreamingResponse(
-        content=generate_streaming_search_results(query=q, limit=limit),
-        media_type="text/event-stream",
-    )
-
-
-@router.get("/search/url", name="Search videos (url)")
-@router_exception_handler
-def search_videos(
-    q: str = Query(description="Video title"),
-    limit: int = Query(
-        50, description="Results amount not to exceed per category", gt=0
-    ),
-) -> models.SearchVideosUrlResponse:
-    """Search videos and return video urls only
-    - This is much faster than the other search endpoints.
-    """
-    search = Search(q, **po_kwargs)
-    videos_found = [video.video_id for video in search.videos]
-    shorts_found = [short.video_id for short in search.shorts]
-    return models.SearchVideosUrlResponse(
-        query=q,
-        videos=videos_found[:limit] if len(videos_found) > limit else videos_found,
-        shorts=shorts_found[:limit] if len(shorts_found) > limit else shorts_found,
+    return models.SearchVideosResponse(
+        query=q, results=search_videos_by_key(query=q, limit=limit)
     )
 
 
@@ -139,7 +100,7 @@ def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
     """Get metadata of a specific video
-    - The first request will take time but the subsequent ones will be faster as they will be served from cache.
+    - Similar subsequent requests will be faster as they will be served from cache for a few hours.
     """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
@@ -170,7 +131,7 @@ def get_video_metadata(
         upload_date=extracted_info.upload_date,
         uploader_url=extracted_info.uploader_url,
         duration_string=extracted_info.duration_string,
-        thumbnail=extracted_info.thumbnail,  # f"https://i.ytimg.com/vi/{extracted_info.id}/maxresdefault.jpg",
+        thumbnail=extracted_info.thumbnail,
         audio=audio_formats,
         video=video_formats,
     )
@@ -182,7 +143,7 @@ def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
     """Initiate download processing
-    - To download the file: Add parameter `download` with value `true` to the returned link.
+    - To download the media file: Add parameter `download` with value `true` to the returned link i.e `?download=true`.
     """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(

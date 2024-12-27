@@ -3,7 +3,7 @@ from tests import client
 import app.v1.models as models
 from app.events import event_startup_create_tempdirs, event_startup_create_tables
 
-video_link = "https://youtu.be/S3wsCRJVUyg?si=svRtQPHef9TSMABt"
+video_link = "https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk?si=svRtQPHef9TSMABt"
 
 
 def run_startup_events():
@@ -20,21 +20,6 @@ def test_video_search(query, limit):
     assert resp.is_success
     videos = models.SearchVideosResponse(**resp.json())
     assert len(videos.results) <= limit
-
-
-@pytest.mark.parametrize(["query", "limit"], [("hello", 2), ("hey", 1)])
-def test_stream_video_search(query, limit):
-    resp = client.get("/api/v1/search/stream", params=dict(q=query, limit=limit))
-    assert resp.is_success
-    assert len(resp.text.split("\n")) <= limit + 1
-
-
-@pytest.mark.parametrize(["query", "limit"], [("hello", 3), ("hey", 4)])
-def test_video_search_urls_only(query, limit):
-    resp = client.get("/api/v1/search/url", params=dict(q=query, limit=limit))
-    assert resp.is_success
-    videos = models.SearchVideosUrlResponse(**resp.json())
-    assert len(videos.shorts) <= limit
 
 
 @pytest.mark.parametrize(
@@ -54,10 +39,10 @@ def test_video_metadata(url):
 @pytest.mark.parametrize(
     ["url", "quality", "bitrate"],
     [
-        ("https://youtu.be/S3wsCRJVUyg", "1080p", None),
-        ("https://youtu.be/S3wsCRJVUyg", "720p", "128k"),
-        ("https://youtu.be/S3wsCRJVUyg", "medium", "192k"),
-        ("https://youtu.be/S3wsCRJVUyg", "low", None),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "1080p", None),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "720p", "128k"),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "medium", "192k"),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "low", None),
     ],
 )
 def test_download_processing(url, quality, bitrate):
@@ -76,7 +61,7 @@ def test_download_processing(url, quality, bitrate):
 @pytest.mark.parametrize(
     ["url", "quality", "audio_bitrate", "audio_only"],
     [
-        ("https://youtu.be/S3wsCRJVUyg", "1080p", "128k", False),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "1080p", "128k", False),
         ("S3wsCRJVUyg", "medium", "192k", True),
     ],
 )

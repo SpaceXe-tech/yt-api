@@ -9,7 +9,7 @@ class SearchVideosResponse(BaseModel):
     class VideoMetadata(BaseModel):
         title: str = Field(description="Video title as in Youtube")
         id: str = Field(description="Video id")
-        duration: int = Field(description="Video's running time in seconds.")
+        duration: str = Field(description="Video's total running")
 
     query: str = Field(description="Search query")
     results: list[VideoMetadata]
@@ -17,68 +17,58 @@ class SearchVideosResponse(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "query": "hello",
+                "query": "diamond songs",
                 "results": [
                     {
-                        "title": "Adele - Hello (Official Music Video)",
-                        "id": "YQHsXMglC9A",
-                        "duration": 367,
+                        "title": "Rihanna - Diamonds",
+                        "id": "0-p5EbAsxUM",
+                        "duration": "3:46",
                     },
                     {
-                        "title": "Adele - Hello (Lyrics)",
-                        "id": "be12BC5pQLE",
-                        "duration": 296,
+                        "title": "Jux Ft Diamond Platnumz - Ololufe Mi (Official Video)",
+                        "id": "6Z5CEE25QH8",
+                        "duration": "4:20",
                     },
                     {
-                        "title": "Lionel Richie - Hello (Official Music Video)",
-                        "id": "mHONNcZbwDY",
-                        "duration": 326,
+                        "title": "Rihanna - Diamonds",
+                        "id": "lWA2pjMjpBs",
+                        "duration": "4:43",
                     },
                     {
-                        "title": "Hello! | Kids Greeting Song and Feelings Song | Super Simple Songs",
-                        "id": "tVlcKp3bWH8",
-                        "duration": 78,
+                        "title": "Diamond | Official Music Video | Gurnam Bhullar | Songs 2018 | Jass Records",
+                        "id": "ggJMQHltiQc",
+                        "duration": "4:21",
                     },
                     {
-                        "title": "Hello Song for Kids | Greeting Song for Kids | The Singing Walrus",
-                        "id": "gghDRJVxFxU",
-                        "duration": 131,
+                        "title": "Diamond Platnumz - Jeje (Official Music Video)",
+                        "id": "g5rFro4XdZ0",
+                        "duration": "3:19",
                     },
-                ],
-            }
-        }
-    }
-
-
-class SearchVideosUrlResponse(BaseModel):
-
-    query: str = Field(description="Search query")
-    videos: list[str] = Field(description="Youtube videos id")
-    shorts: list[str] = Field(description="Short videos id")
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "query": "Alan Walker songs",
-                "videos": [
-                    "Wr1KbcjIW8Q",
-                    "1-xGerv5FOk",
-                    "ejbVsbrKd9U",
-                    "60ItHLz5WEA",
-                    "isVzVPpx3zc",
-                    "gYrjTLVfJyM",
-                    "kyLuzKbgXAs",
-                    "M-P4QBt-FWw",
-                ],
-                "shorts": [
-                    "uebrUqs6K50",
-                    "t9qrSfSxP00",
-                    "W9eSwb8zB7I",
-                    "EjTswBdO7LA",
-                    "AW5S4xSJBh0",
-                    "14nKFaaogMU",
-                    "nz3gXdAEG7k",
-                    "uWI3yy9Qf54",
+                    {
+                        "title": "Diamond Platnumz Ft Mr. Blue & Jay Melody - Mapoz (Official Music Video)",
+                        "id": "M1dUTxVXS5Q",
+                        "duration": "4:08",
+                    },
+                    {
+                        "title": "Diamond Platnumz x Jason Derulo ft Khalil Harisson & Chley - Komasava Remix (Official Music Video)",
+                        "id": "RpZRtX2mQdc",
+                        "duration": "4:51",
+                    },
+                    {
+                        "title": "Diamond Platnumz feat Chley - Shu! (Official Music Video)",
+                        "id": "e2byDgJ8AyA",
+                        "duration": "4:25",
+                    },
+                    {
+                        "title": "Diamond platnumz ft Willy Paul _ Yaishe (official music video)",
+                        "id": "SISK-4gqgc0",
+                        "duration": "2:02",
+                    },
+                    {
+                        "title": "1 Hour Diamond Hall Meditation Silent Music | #silentmusic #pandavbhawan @BrahmaKumarisHapur",
+                        "id": "Fvu0Yn4Yg98",
+                        "duration": "1:00:58",
+                    },
                 ],
             }
         }
