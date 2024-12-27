@@ -36,7 +36,7 @@ PARAMS_TYPE_VIDEO = "EgIQAQ%3D%3D"
 innertube_client = InnerTube(
     "WEB",
     "2.20230920.00.00",
-    #proxies=None if not loaded_config.proxy else Proxy(loaded_config.proxy),
+    # proxies=None if not loaded_config.proxy else Proxy(loaded_config.proxy),
 )
 
 
@@ -128,7 +128,6 @@ def get_video_metadata(
         id=extracted_info.id,
         title=extracted_info.title,
         channel=extracted_info.channel,
-        upload_date=extracted_info.upload_date,
         uploader_url=extracted_info.uploader_url,
         duration_string=extracted_info.duration_string,
         thumbnail=extracted_info.thumbnail,
@@ -151,6 +150,7 @@ def process_video_for_download(
         ext=loaded_config.default_extension,
         audio_ext="m4a" if payload.quality in audioQualities else "webm",
     )
+    print(video_formats.get("medium").url)
     saved_to: Path = download.run(
         title=extracted_info.title,
         qualities_format=video_formats,

@@ -97,7 +97,6 @@ class VideoMetadataResponse(BaseModel):
     id: str
     title: str
     channel: str
-    upload_date: datetime
     uploader_url: str
     duration_string: str
     thumbnail: HttpUrl
@@ -110,12 +109,11 @@ class VideoMetadataResponse(BaseModel):
                 "id": "lw5tB9LQQVM",
                 "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
                 "channel": "MariooOfficial",
-                "upload_date": "1970-08-23T06:28:47Z",
                 "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
                 "duration_string": "2:34",
-                "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/maxresdefault.jpg",
+                "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/sddefault.jpg",
                 "audio": [
-                    {"quality": "ultralow", "size": "0.68 MB"},
+                    {"quality": "ultralow", "size": "682.92 KB"},
                     {"quality": "low", "size": "1.32 MB"},
                     {"quality": "medium", "size": "2.6 MB"},
                 ],

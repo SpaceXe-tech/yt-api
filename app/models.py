@@ -78,7 +78,7 @@ class EnvVariables(BaseModel):
             # http_chunk_size=self.http_chunk_size, # activating this makes
             # download speed so slow. Consider giving it a fix.
             updatetime=self.updatetime,
-            buffersize=self.buffersize,
+            # buffersize=self.buffersize,
             ratelimit=self.ratelimit,
             throttledratelimit=self.throttledratelimit,
             min_filesize=self.min_filesize,
@@ -94,7 +94,7 @@ class EnvVariables(BaseModel):
             allow_multiple_video_streams=self.allow_multiple_video_streams,
             allow_multiple_audio_streams=self.allow_multiple_audio_streams,
             geo_bypass=self.geo_bypass,
-            eo_bypass_country=self.geo_bypass_country,
+            geo_bypass_country=self.geo_bypass_country,
             keep_fragments=False,
             fragment_retries=2,
         )
@@ -126,6 +126,12 @@ class EnvVariables(BaseModel):
                 }
             else:
                 raise ValueError(f"po_token requires either cookiefile or visitorData.")
+        elif self.visitorData:
+            params["extractor_args"] = {
+                "youtube": {
+                    "visitor_data": [self.visitorData],
+                }
+            }
 
         return params
 
