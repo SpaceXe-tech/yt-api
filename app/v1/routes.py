@@ -36,7 +36,7 @@ PARAMS_TYPE_VIDEO = "EgIQAQ%3D%3D"
 innertube_client = InnerTube(
     "WEB",
     "2.20230920.00.00",
-    proxies=None if not loaded_config.proxy else Proxy(loaded_config.proxy),
+    #proxies=None if not loaded_config.proxy else Proxy(loaded_config.proxy),
 )
 
 
