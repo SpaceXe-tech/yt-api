@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Query, Request
-from fastapi.responses import StreamingResponse
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
 from app.utils import (
@@ -150,7 +149,6 @@ def process_video_for_download(
         ext=loaded_config.default_extension,
         audio_ext="m4a" if payload.quality in audioQualities else "webm",
     )
-    print(video_formats.get("medium").url)
     saved_to: Path = download.run(
         title=extracted_info.title,
         qualities_format=video_formats,
