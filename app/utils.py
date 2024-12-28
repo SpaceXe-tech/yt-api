@@ -21,12 +21,12 @@ from fastapi import Request
 logger = logging.getLogger(__file__)
 
 compiled_video_id_patterns = (
-    re.compile(r"https://youtu.be/([\w\-_]{11}).*"),  # shareable link
-    re.compile(r"https://www.youtube.com/watch\?v=([\w\-_]{11})$"),  # watch link
-    re.compile(r"https://www.youtube.com/embed/([\w\-_]{11})$"),  # embedded link
+    re.compile(r"https?://youtu\.be/([\w\-_]{11}).*"),  # shareable link
+    re.compile(r"https?://www\.youtube\.com/watch\?v=([\w\-_]{11})$"),  # watch link
+    re.compile(r"https?://www\.youtube\.com/embed/([\w\-_]{11})$"),  # embedded link
     re.compile(r"^([\w\-_]{11})$"),  # video id only
-    re.compile(r"https://youtube.com/shorts/([\w\-_]{11}).*"),  # Short shareable link
-    re.compile(r"https://www.youtube.com/shorts/([\w\-_]{11})$"),  # Short watch link
+    re.compile(r"https?://youtube\.com/shorts/([\w\-_]{11}).*"),  # Short shareable link
+    re.compile(r"https?://www\.youtube\.com/shorts/([\w\-_]{11})$"),  # Short watch link
 )
 
 

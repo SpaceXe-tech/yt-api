@@ -95,8 +95,8 @@ class VideoMetadataResponse(BaseModel):
 
     id: str
     title: str
-    channel: str
-    uploader_url: str
+    channel: Optional[str] = None
+    uploader_url: Optional[str] = None
     duration_string: str
     thumbnail: HttpUrl
     audio: list[MediaMetadata]
