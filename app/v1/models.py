@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional
 from yt_dlp_bonus.constants import mediaQualitiesType, audioBitratesType
-from datetime import datetime
 
 
 class SearchVideosResponse(BaseModel):
