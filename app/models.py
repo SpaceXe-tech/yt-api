@@ -7,9 +7,8 @@ from pydantic import (
     PositiveInt,
     EmailStr,
     HttpUrl,
-    IPvAnyAddress,
 )
-from typing import Optional, Literal, Union
+from typing import Optional, Literal
 from pathlib import Path
 import os
 import logging
@@ -45,8 +44,8 @@ class EnvVariables(BaseModel):
     # static server options
     static_server_url: Optional[str] = None
 
-    download_ip: Union[IPvAnyAddress, str] = None
     # Downloader params - yt_dlp
+    default_audio_format: Literal["webm", "m4a"] = "m4a"
     enable_logging: Optional[bool] = False
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None

@@ -55,6 +55,9 @@ def router_exception_handler(func: t.Callable):
         try:
             resp = func(*args, **kwargs)
             return resp
+        except HTTPException as e:
+            raise e
+
         except (
             AssertionError,
             UserInputError,

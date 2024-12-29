@@ -16,9 +16,7 @@ import typing as t
 
 router = APIRouter(prefix="/v1")
 
-yt = YoutubeDLBonus(
-    params=loaded_config.ytdlp_params, download_ip=loaded_config.download_ip
-)
+yt = YoutubeDLBonus(params=loaded_config.ytdlp_params)
 
 download = Download(
     yt=yt,
@@ -132,6 +130,7 @@ def get_video_metadata(
         thumbnail=extracted_info.thumbnail,
         audio=audio_formats,
         video=video_formats,
+        default_audio_format=loaded_config.default_audio_format,
     )
 
 
@@ -147,7 +146,11 @@ def process_video_for_download(
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info,
         ext=loaded_config.default_extension,
-        audio_ext="m4a" if payload.quality in audioQualities else "webm",
+        audio_ext=(
+            loaded_config.default_audio_format
+            if payload.quality in audioQualities
+            else "webm"
+        ),
     )
     saved_to: Path = download.run(
         title=extracted_info.title,
