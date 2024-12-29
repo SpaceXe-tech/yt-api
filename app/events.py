@@ -20,8 +20,10 @@ def event_shutdown_clear_previous_downloads():
 
 
 def event_all_clear_temp_files():
-    run_system_command("rm *.part *.ytdl *.opus")
-    run_system_command(f"rm '{download_dir}/*.part' '{download_dir}/*.ytdl'")
+    run_system_command("rm *.part *.ytdl *.opus *.webm *.m4a")
+    run_system_command(
+        f"rm '{download_dir}/*.part' '{download_dir}/*.ytdl' '{download_dir}/*.opus'"
+    )
 
 
 def register_events(app: FastAPI) -> FastAPI:
