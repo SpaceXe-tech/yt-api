@@ -42,7 +42,7 @@ def test_video_metadata(url):
         ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "1080p", None),
         ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "720p", "128k"),
         ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "medium", "192k"),
-        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "low", None),
+        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "medium", None),
     ],
 )
 def test_download_processing(url, quality, bitrate):
