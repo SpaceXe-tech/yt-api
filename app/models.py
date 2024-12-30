@@ -149,7 +149,9 @@ class EnvVariables(BaseModel):
     @field_validator("working_directory")
     def validate_working_directory(value):
         working_dir = Path(value)
-        if not working_dir.exists() or not working_dir.is_dir():
+        if value == "static" and not working_dir.exists():
+            os.mkdir("static")
+        elif not working_dir.exists() or not working_dir.is_dir():
             raise TypeError(f"Invalid working_directory passed - {value}")
         return value
 
