@@ -13,6 +13,7 @@ from yt_dlp_bonus.exceptions import (
     FileSizeOutOfRange,
     UknownDownloadFailure,
 )
+from yt_dlp.utils import DownloadError
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
 from app.config import download_dir, loaded_config
@@ -28,6 +29,8 @@ compiled_video_id_patterns = (
     re.compile(r"https?://youtube\.com/shorts/([\w\-_]{11}).*"),  # Short shareable link
     re.compile(r"https?://www\.youtube\.com/shorts/([\w\-_]{11})$"),  # Short watch link
 )
+
+compiled_ytdlp_download_error_msg_pattern = re.compile(r".*\s[\w\-_]{11}:\s(.+)")
 
 
 def create_temp_dirs() -> t.NoReturn:
@@ -66,19 +69,22 @@ def router_exception_handler(func: t.Callable):
             UknownDownloadFailure,
         ) as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        except DownloadError as e:
+            msg = re.findall(compiled_ytdlp_download_error_msg_pattern, e.msg)
+            if msg:
+                detail = msg[0]
+                status_code = status.HTTP_403_FORBIDDEN
+            else:
+                detail = "Server is unable to download the targeted media file!"
+                status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+            raise HTTPException(status_code, detail)
         except Exception as e:
             logger.exception(e)
-            exception_string = str(e)
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
             detail = (
                 "Server encountered an issue while trying to handle that request!",
             )
-            if "Video unavailable" in exception_string:
-                detail = (
-                    "This video contains content from SME and WMG, one or more of "
-                    "whom have blocked it in server's country on copyright grounds."
-                )
-                status_code = status.HTTP_403_FORBIDDEN
             raise HTTPException(status_code=status_code, detail=detail)
 
     return decorator
