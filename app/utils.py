@@ -68,13 +68,18 @@ def router_exception_handler(func: t.Callable):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         except Exception as e:
             logger.exception(e)
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=(
-                    "There was an issue with the server while "
-                    "while trying to handle that request!",
-                ),
+            exception_string = str(e)
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            detail = (
+                "Server encountered an issue while trying to handle that request!",
             )
+            if "Video unavailable" in exception_string:
+                detail = (
+                    "This video contains content from SME and WMG, one or more of "
+                    "whom have blocked it in server's country on copyright grounds."
+                )
+                status_code = status.HTTP_403_FORBIDDEN
+            raise HTTPException(status_code=status_code, detail=detail)
 
     return decorator
 

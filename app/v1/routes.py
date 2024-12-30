@@ -12,7 +12,6 @@ from yt_dlp_bonus import YoutubeDLBonus, Download
 from yt_dlp_bonus.constants import audioQualities
 from yt_dlp_bonus.utils import get_size_string
 from functools import lru_cache
-import typing as t
 
 router = APIRouter(prefix="/v1")
 
@@ -97,7 +96,8 @@ def get_video_metadata(
     payload: models.VideoMetadataPayload,
 ) -> models.VideoMetadataResponse:
     """Get metadata of a specific video
-    - Similar subsequent requests will be faster as they will be served from cache for a few hours.
+    - Similar subsequent requests will be faster as they will be served
+    from cache for a few hours.
     """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
@@ -140,7 +140,8 @@ def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
     """Initiate download processing
-    - To download the media file: Add parameter `download` with value `true` to the returned link i.e `?download=true`.
+    - To download the media file: Add parameter `download` with value
+    `true` to the returned link i.e `?download=true`.
     """
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
@@ -152,9 +153,13 @@ def process_video_for_download(
             else "webm"
         ),
     )
+    updated_video_formats = yt.update_audio_video_size(
+        video_formats,
+        payload.quality if payload.quality in audioQualities else "medium",
+    )
     saved_to: Path = download.run(
         title=extracted_info.title,
-        qualities_format=video_formats,
+        qualities_format=updated_video_formats,
         quality=payload.quality,
         bitrate=payload.bitrate,
     )
