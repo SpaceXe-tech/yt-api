@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Query, Request
+from fastapi import status, HTTPException
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
 from app.utils import (
@@ -85,9 +86,13 @@ def search_videos(
     - Search videos matching the query and return whole results at once.
     - Serves from cache similar `99` subsequent queries.
     """
-    return models.SearchVideosResponse(
-        query=q, results=search_videos_by_key(query=q, limit=limit)
-    )
+    videos_found = search_videos_by_key(query=q, limit=limit)
+    if not videos_found:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No video matched that query - {q}!",
+        )
+    return models.SearchVideosResponse(query=q, results=videos_found)
 
 
 @router.post("/metadata", name="Video metadata")

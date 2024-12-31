@@ -22,15 +22,15 @@ from fastapi import Request
 logger = logging.getLogger(__file__)
 
 compiled_video_id_patterns = (
-    re.compile(r"https?://youtu\.be/([\w\-_]{11}).*"),  # shareable link
-    re.compile(r"https?://www\.youtube\.com/watch\?v=([\w\-_]{11})$"),  # watch link
-    re.compile(r"https?://www\.youtube\.com/embed/([\w\-_]{11})$"),  # embedded link
+    re.compile(r"^https?://youtu\.be/([\w\-_]{11}).*"),  # shareable link
+    re.compile(r"^https?://www\.youtube\.com/watch\?v=([\w\-_]{11})$"),  # watch link
+    re.compile(r"^https?://www\.youtube\.com/embed/([\w\-_]{11})$"),  # embedded link
     re.compile(r"^([\w\-_]{11})$"),  # video id only
-    re.compile(r"https?://youtube\.com/shorts/([\w\-_]{11}).*"),  # Short shareable link
-    re.compile(r"https?://www\.youtube\.com/shorts/([\w\-_]{11})$"),  # Short watch link
+    re.compile(r"^https?://youtube\.com/shorts/([\w\-_]{11}).*"),  # Short shareable link
+    re.compile(r"^https?://www\.youtube\.com/shorts/([\w\-_]{11})$"),  # Short watch link
 )
 
-compiled_ytdlp_download_error_msg_pattern = re.compile(r".*\s[\w\-_]{11}:\s(.+)")
+compiled_ytdlp_download_error_msg_pattern = re.compile(r".*\s[\w\-_]{11}:\s+(Video\s+.+)")
 
 
 def create_temp_dirs() -> t.NoReturn:
