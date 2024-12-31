@@ -2,6 +2,7 @@
 
 from flask import request, Flask, Response, jsonify
 from flask.views import MethodView
+from flask_cors import CORS
 from requests import Session
 from requests.exceptions import Timeout
 from dataclasses import dataclass
@@ -19,6 +20,20 @@ session.headers = {
 request_timeout = None
 
 app = Flask(__name__)
+
+
+cors = CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "*",
+            "allow_headers": ["Content-Type", "Authorization", "X-Application"],
+            "expose_headers": ["Location"],
+            "methods": ["GET", "POST"],
+        }
+    },
+)
+
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s : %(message)s",
@@ -80,6 +95,16 @@ class ProxyView(MethodView):
     def get_absolute_url(self, endpoint: str) -> str:
         return path.join(self.api_base_url, endpoint)
 
+    def process_resp_headers(self, request_headers) -> dict:
+        x_date = request_headers.get("Date")
+        x_server = request_headers.get("server")
+        request_headers.pop("Date")
+        request_headers.pop("Server")
+        response_headers = dict(request_headers)
+        response_headers["X-Date"] = x_date
+        response_headers["X-Server"] = x_server
+        return response_headers
+
     @view_error_handler
     def get(self, api_endpoint: str):
         """Handles get requests"""
@@ -94,7 +119,7 @@ class ProxyView(MethodView):
         return Response(
             response=resp.content,
             status=resp.status_code,
-            headers=dict(resp.headers),
+            headers=self.process_resp_headers(resp.headers),
             content_type=resp.headers.get("content-type"),
         )
 
@@ -113,7 +138,7 @@ class ProxyView(MethodView):
         return Response(
             response=resp.content,
             status=resp.status_code,
-            headers=dict(resp.headers),
+            headers=self.process_resp_headers(resp.headers),
             content_type=resp.headers.get("content-type"),
         )
 
