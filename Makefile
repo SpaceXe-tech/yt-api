@@ -1,7 +1,8 @@
-.PHONY: install test test-api-v1 runserver-dev runserver deploy
+.PHONY: install test test-api-v1 runserver-dev runserver run-proxy-server run-static-server deploy
 
 PYTHON := python3
 PIP := $(PYTHON) -m pip
+HOST := 0.0.0.0
 
 default: install test runserver
 
@@ -23,5 +24,11 @@ runserver-dev:
 # Target to run production server
 runserver:
 	$(PYTHON) -m fastapi run app
+
+run-proxy-server:
+	$(PYTHON) proxy_server.py http://localhost:8000 --host $(HOST)
+
+run-static-server:
+	$(PYTHON) static_server.py --host $(HOST)
 
 deploy: install test runserver

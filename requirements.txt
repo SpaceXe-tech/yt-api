@@ -9,3 +9,4 @@ flask==3.1.0
 email-validator==2.2.0
 innertube>=2.1.16
 phantomjs>=1.4.1
+flask-cors==5.0.0
