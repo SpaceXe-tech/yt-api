@@ -42,6 +42,12 @@ async def home():
     return RedirectResponse("/api/docs")
 
 
+@app.get("/api/live-check", include_in_schema=False)
+def test_live():
+    """Test API's live status"""
+    return {}
+
+
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()

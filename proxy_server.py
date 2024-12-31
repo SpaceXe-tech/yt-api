@@ -26,6 +26,8 @@ logging.basicConfig(
     datefmt="%H:%M:%S %d-%b-%Y",
 )
 
+get_exception_string = lambda e: e.args[1] if e.args and len(e.args) > 1 else str(e)
+
 
 @dataclass
 class ErrorResponse:
@@ -53,7 +55,7 @@ def view_error_handler(func: t.Callable):
             )
         except Exception as e:
             err = ErrorResponse(
-                detail=e.args[1] if e.args and len(e.args) > 1 else str(e),
+                detail=get_exception_string(e),
                 status_code=500,
             )
         finally:
@@ -153,4 +155,18 @@ if __name__ == "__main__":
     logging.info(
         f"Starting server at {args.host}:{args.port} - upstream : {args.base_url}"
     )
-    app.run(host=args.host, port=args.port, debug=True)
+    try:
+        test_resp = session.get(
+            path.join(ProxyView.api_base_url, "api/live-check"), timeout=20
+        )
+        if not test_resp.ok:
+            print(
+                f"Error : API failed to pass live-status check - ({test_resp.status_code}, {test_resp.reason}, {test_resp.text}) "
+            )
+            exit(1)
+    except Exception as e:
+        print(
+            f"Error : Unable to reach y2mate-api at - {ProxyView.api_base_url} due to : {get_exception_string(e)}"
+        )
+        exit(1)
+    app.run(host=args.host, port=args.port, debug=False)
