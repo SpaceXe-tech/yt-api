@@ -124,7 +124,7 @@ if __name__ == "__main__":
         description="Proxy for y2mate-clone, meant to bridge http and https accordingly",
         epilog="Not meant for production purposes.",
     )
-    parser.add_argument("base_url", help="Y2mate API base url.")
+    parser.add_argument("base_url", help="Y2mate-clone API base url.")
     parser.add_argument(
         "-ho",
         "--host",
