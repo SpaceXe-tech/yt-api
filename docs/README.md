@@ -43,7 +43,7 @@ make install
 
 ### Step 3: Configure Environment Variables
 
-Create a copy of the [configs/*](../configs/) file and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
+Copy [configs/env/*](../configs/env/) file to the root directory of the project and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
 
 > [!WARNING]
 > Some of the settings in the `.env` file are very sensitive to the app. A slight change can have a significant impact on the apps's functionality. Ensure you're in good knowledge of the changes you will be making.
