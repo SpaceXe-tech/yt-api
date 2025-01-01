@@ -1,6 +1,6 @@
 # Utility Servers
 
-## 1. [Static Server](static_server.py)
+## 1. [Static Server](./static_server.py)
 
 The sole purpose of this is to reduce the work-load on youtube-downloader API.
 Allows the API to only serve the dynamic contents as it focuses on static ones.
@@ -11,8 +11,12 @@ Allows the API to only serve the dynamic contents as it focuses on static ones.
 
 <details open>
 
-<code> $ python -m servers.static --help </code>
 <summary>
+
+<code> $ python -m servers.static --help </code>
+
+
+</summary>
 
 ```
 usage: y2mate-clone-static-server [-h] [-ho HOST] [-p PORT]
@@ -28,11 +32,9 @@ For production environment use uwsgi.
 
 ```
 
-</summary>
-
 </details>
 
-## 2. [Proxy Server](proxy_server.py)
+## 2. [Proxy Server](./proxy_server.py)
 
 Hosting web-interface over https makes http (insecure) API calls to fail except to localhost.
 So this script links the two; a youtube-downloader API accessible over http and a web-interface that's
@@ -50,8 +52,11 @@ accessible securely (https).
 
 <details open>
 
-<code> $ python -m servers.proxy --help </code>
 <summary>
+
+<code> $ python -m servers.proxy --help </code>
+
+</summary>
 
 ```
 usage: y2mate-clone-proxy [-h] [-ho HOST] [-p PORT] [-t TIMEOUT] base_url
@@ -71,8 +76,6 @@ options:
 Not meant for production purposes.
 
 ```
-
-</summary>
 
 </details>
 
