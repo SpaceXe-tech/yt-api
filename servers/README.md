@@ -1,6 +1,6 @@
 # Utility Servers
 
-## 1. [Static Server](./static_server.py)
+## 1. [Static Server](./static.py)
 
 The sole purpose of this is to reduce the work-load on youtube-downloader API.
 Allows the API to only serve the dynamic contents as it focuses on static ones.
@@ -34,7 +34,7 @@ For production environment use uwsgi.
 
 </details>
 
-## 2. [Proxy Server](./proxy_server.py)
+## 2. [Proxy Server](./proxy.py)
 
 Hosting web-interface over https makes http (insecure) API calls to fail except to localhost.
 So this script links the two; a youtube-downloader API accessible over http and a web-interface that's
@@ -81,3 +81,12 @@ Not meant for production purposes.
 
 > [!IMPORTANT]
 > Running these scripts over [uwsgi](https://pypi.org/project/uWSGI/) is always recommended especially in production environment.
+
+## Makefile
+
+Start servers using default configurations
+
+| Index | Server | Address | Port | Dev. Command             | Prod. Command                  |
+|-------|--------|---------|------|--------------------------|--------------------------------|
+|  0    | Static | 0.0.0.0 | 8888 | `make run-static-server` | `make run-static-server-uwsgi` |
+|  1    | Proxy  | 0.0.0.0 | 8080 | `make run-proxy-server`  | `make run-proxy-server-uwsgi`  |
