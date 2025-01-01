@@ -12,7 +12,9 @@ Allows the API to only serve the dynamic contents as it focuses on static ones.
 <details open>
 
 <summary>
+
   <code> $ python -m servers.static --help </code>
+
 </summary>
 
 ```
@@ -50,7 +52,9 @@ accessible securely (https).
 <details open>
 
 <summary>
+
   <code> $ python -m servers.proxy --help </code>
+
 </summary>
 
 ```
