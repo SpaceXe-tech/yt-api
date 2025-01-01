@@ -1,5 +1,14 @@
 #!/usr/bin/python
+"""Hosting web-interface over https makes http (insecure) API calls to fail except to localhost.
+So this script links the two; a youtube-downloader API accessible over http and a web-interface that's
+accessible securely (https).
 
+# Steps
+
+1. Host youtube-downloader over http (insecure)
+2. Start this proxy and point base_url to that of youtube-downloader
+3. Point API-BASE-URL in web-interface to proxy's address.
+"""
 from flask import request, Flask, Response, jsonify
 from flask.views import MethodView
 from flask_cors import CORS
@@ -148,7 +157,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         prog="y2mate-clone-proxy",
-        description="Proxy for y2mate-clone, meant to bridge http and https accordingly",
+        description="Proxy for y2mate-clone. Meant to forward request to and fro an insecure API",
         epilog="Not meant for production purposes.",
     )
     parser.add_argument("base_url", help="Y2mate-clone API base url.")

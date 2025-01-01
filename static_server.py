@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-"""This module contains code for serving static contents using flask framework"""
+"""This script contains code for serving static contents using flask framework
+The sole target of this is to reduce the work-load of the youtube-downloader API.
+Allows the API to only serve the dynamic contents as it focus on static ones.
+"""
 
 from flask import Flask, request, send_from_directory
 from app.config import download_dir
