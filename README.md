@@ -78,10 +78,15 @@ To improve server performance and minimize load, I recommend setting up a separa
 YouTube flags requests without proper authorization. To work around this issue:
 
 1. Use cookies and po_token as authorized workarounds.
-2. Alternatively, use a proxy from a location exempted from required authorizations (e.g., Canada).
+2. Alternatively, use a proxy from a location exempted from required authorizations (e.g., Canada, USA).
 
 > [!NOTE]
 > While using a proxy is a straightforward solution, there's no guarantee that the request will go through successfully.
+
+## Utility Servers
+
+1. [Static Server](static_server.py)
+2. [Proxy Server](proxy_server.py)
 
 ## Additional Resources
 
