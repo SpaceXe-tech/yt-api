@@ -43,7 +43,7 @@ make install
 
 ### Step 3: Configure Environment Variables
 
-Create a copy of the [configs/*](../config) file and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
+Create a copy of the [configs/*](config) file and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
 
 > [!WARNING]
 > Some of the settings in the `.env` file are very sensitive to the app. A slight change can have a significant impact on the apps's functionality. Ensure you're in good knowledge of the changes you will be making.
@@ -65,7 +65,7 @@ make runserver
 
 To improve server performance and minimize load, I recommend setting up a separate server for handling static contents (audios and videos). To do this:
 
-1. Execute the [`static_server.py`](../servers/static_server.py) file.
+1. Execute the [`static_server.py`](servers/static_server.py) file.
 2. Configure the API using the `static_server_url` key with the URL of the static server.
 
 > [!IMPORTANT]
@@ -85,8 +85,8 @@ YouTube flags requests without proper authorization. To work around this issue:
 
 ## Utility Servers
 
-1. [Static Server](../ervers/static_server.py)
-2. [Proxy Server](../servers/proxy_server.py)
+1. [Static Server](servers/static_server.py)
+2. [Proxy Server](servers/proxy_server.py)
 
 ## Additional Resources
 
