@@ -5,17 +5,14 @@
 The sole purpose of this is to reduce the work-load on youtube-downloader API.
 Allows the API to only serve the dynamic contents as it focuses on static ones.
 
-### Usage:
+### Usage
 
 `$ python -m servers.static`
 
 <details open>
 
 <summary>
-
-<code> $ python -m servers.static --help </code>
-
-
+  <code> $ python -m servers.static --help </code>
 </summary>
 
 ```
@@ -46,16 +43,14 @@ accessible securely (https).
 2. Start this proxy (locally) and point base_url to the address of youtube-downloader
 3. Point API-BASE-URL in web-interface to proxy's address.
 
-### Usage:
+### Usage
 
 `$ python -m servers.proxy http://localhost:8000/`
 
 <details open>
 
 <summary>
-
-<code> $ python -m servers.proxy --help </code>
-
+  <code> $ python -m servers.proxy --help </code>
 </summary>
 
 ```
