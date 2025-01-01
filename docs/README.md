@@ -85,8 +85,8 @@ YouTube flags requests without proper authorization. To work around this issue:
 
 ## Utility Servers
 
-1. [Static Server](static_server.py)
-2. [Proxy Server](proxy_server.py)
+1. [Static Server](servers/static_server.py)
+2. [Proxy Server](servers/proxy_server.py)
 
 ## Additional Resources
 

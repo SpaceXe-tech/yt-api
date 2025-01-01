@@ -1,4 +1,4 @@
-.PHONY: install test test-api-v1 runserver-dev runserver run-proxy-server run-static-server deploy
+.PHONY: install test test-api-v1 runserver-dev runserver run-proxy-server run-static-server run-proxy-server-uwsgi run-static-server-uwsgi deploy
 
 PYTHON := python3
 PIP := $(PYTHON) -m pip
@@ -26,9 +26,15 @@ runserver:
 	$(PYTHON) -m fastapi run app
 
 run-proxy-server:
-	$(PYTHON) proxy_server.py http://localhost:8000 --host $(HOST)
+	$(PYTHON) -m servers.proxy http://localhost:8000 --host $(HOST)
+
+run-proxy-server-uwsgi:
+	./uwsgi.sh proxy
 
 run-static-server:
-	$(PYTHON) static_server.py --host $(HOST)
+	$(PYTHON) -m servers.static --host $(HOST)
+
+run-static-server-uwsgi:
+	./uwsgi.sh static
 
 deploy: install test runserver
