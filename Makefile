@@ -1,4 +1,11 @@
-.PHONY: install test test-api-v1 runserver-dev runserver run-proxy-server run-static-server run-proxy-server-uwsgi run-static-server-uwsgi deploy
+.PHONY: (
+	      install test test-api-v1 \
+          runserver-dev runserver \
+		  run-proxy-server run-static-server \
+		  run-proxy-server-uwsgi run-static-server-uwsgi \
+		  uwsgi-proxy uwsgi-static \
+		  deploy 
+	)
 
 PYTHON := python3
 PIP := $(PYTHON) -m pip
@@ -36,5 +43,14 @@ run-static-server:
 
 run-static-server-uwsgi:
 	./uwsgi.sh static
+
+uwsgi-static:
+	uwsgi --ini configs/uwsgi/static.ini
+
+uwsgi-proxy:
+	uwsgi --ini configs/uwsgi/proxy.ini
+
+kill-uwsgi:
+	pkill uwsgi
 
 deploy: install test runserver

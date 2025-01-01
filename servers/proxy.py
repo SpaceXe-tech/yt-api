@@ -71,6 +71,7 @@ def view_error_handler(func: t.Callable):
     def decorator(*args, **kwargs):
         try:
             err = None
+            print("Reached", args, kwargs)
             return func(*args, **kwargs)
         except Timeout:
             err = ErrorResponse(
@@ -101,6 +102,11 @@ class ProxyView(MethodView):
         """Extracts current request parameters"""
         return dict(request.args)
 
+    @property
+    def request_headers(self) -> dict:
+        """Updated upstream request headers"""
+        return {"X-Real-Ip": request.remote_addr}
+
     def get_absolute_url(self, endpoint: str) -> str:
         return path.join(self.api_base_url, endpoint)
 
@@ -121,6 +127,7 @@ class ProxyView(MethodView):
             self.get_absolute_url(api_endpoint),
             params=self.request_params,
             timeout=request_timeout,
+            headers=self.request_headers,
         )
         logging.debug(
             f"Serving {request.remote_addr} - {api_endpoint} - {resp.status_code}"
@@ -140,6 +147,7 @@ class ProxyView(MethodView):
             params=self.request_params,
             json=request.json,
             timeout=request_timeout,
+            headers=self.request_headers,
         )
         logging.debug(
             f"Serving {request.remote_addr} - {api_endpoint} - {resp.status_code}"
@@ -156,11 +164,14 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="y2mate-clone-proxy",
-        description="Proxy for y2mate-clone. Meant to forward request to and fro an insecure API",
+        prog="youtube-downloader--proxy",
+        description=(
+            "Meant to forward request to and fro"
+            " youtube-downloader API serving on http"
+        ),
         epilog="Not meant for production purposes.",
     )
-    parser.add_argument("base_url", help="Y2mate-clone API base url.")
+    parser.add_argument("base_url", help="Youtube-Downloader API base url.")
     parser.add_argument(
         "-ho",
         "--host",
@@ -200,7 +211,7 @@ if __name__ == "__main__":
             exit(1)
     except Exception as e:
         print(
-            f"Error : Unable to reach y2mate-api at - {ProxyView.api_base_url} due to : {get_exception_string(e)}"
+            f"Error : Unable to reach API at - {ProxyView.api_base_url} due to : {get_exception_string(e)}"
         )
         exit(1)
     app.run(host=args.host, port=args.port, debug=False)

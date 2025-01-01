@@ -1,4 +1,9 @@
-# Server Configurations
+# Configurations
 
-> [!IMPORTANT]
-> This config needs to be at the root directory of the project and named **.env**
+# [1. ENV](./env/)
+
+Contains configurations for the api
+
+# [2. UWSGI](./uwsgi/)
+
+Contains configurations for uwsgi server.

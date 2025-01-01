@@ -169,3 +169,4 @@ run.sh
 *.mp4
 *.opus
 *.m4a
+run/
