@@ -9,6 +9,7 @@ elif [ "$target_server" == "static" ]; then
    echo "[STATIC] Serving files from static/downloads at /file"
    uwsgi --http=0.0.0.0:8888 --static-map /file=static/downloads -w servers.static:app --enable-threads
 else
-   echo "proxy|static must be explicitly declared"
-   echo "e.g ./uwsgi.sh proxy"
+   echo "[ERROR] proxy|static must be explicitly declared"
+   echo "        e.g ./uwsgi.sh proxy"
+   exit 1
 fi
