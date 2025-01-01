@@ -71,11 +71,10 @@ def view_error_handler(func: t.Callable):
     def decorator(*args, **kwargs):
         try:
             err = None
-            print("Reached", args, kwargs)
             return func(*args, **kwargs)
         except Timeout:
             err = ErrorResponse(
-                detail=f"Connect timeout while connecting to API after {request_timeout}",
+                detail=f"Connection timeout while connecting to API after {request_timeout}",
                 timeout=504,
             )
         except Exception as e:
