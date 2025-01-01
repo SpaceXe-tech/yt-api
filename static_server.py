@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 """This script contains code for serving static contents using flask framework
-The sole target of this is to reduce the work-load of the youtube-downloader API.
-Allows the API to only serve the dynamic contents as it focus on static ones.
+The sole purpose of this is to reduce the work-load on youtube-downloader API.
+Allows the API to only serve the dynamic contents as it focuses on static ones.
 """
 
 from flask import Flask, request, send_from_directory

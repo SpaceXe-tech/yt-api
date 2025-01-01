@@ -6,7 +6,7 @@ accessible securely (https).
 # Steps
 
 1. Host youtube-downloader over http (insecure)
-2. Start this proxy and point base_url to that of youtube-downloader
+2. Start this proxy (locally) and point base_url to the address of youtube-downloader
 3. Point API-BASE-URL in web-interface to proxy's address.
 """
 from flask import request, Flask, Response, jsonify
