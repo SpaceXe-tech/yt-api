@@ -44,6 +44,8 @@ class EnvVariables(BaseModel):
     # static server options
     static_server_url: Optional[str] = None
 
+    api_base_url: Optional[str] = None
+
     # Downloader params - yt_dlp
     default_audio_format: Literal["webm", "m4a"] = "m4a"
     enable_logging: Optional[bool] = False
@@ -181,3 +183,10 @@ class EnvVariables(BaseModel):
             email=str(self.contact_email),
             url=str(self.contact_url),
         )
+
+    @property
+    def api_base_url_validated(self) -> str:
+        """Checks that `api_base_url` is not None"""
+        if not self.api_base_url:
+            raise ValueError("Base url for API cannot be null.")
+        return self.api_base_url

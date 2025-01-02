@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from os import path
 import logging
 import typing as t
+from app.config import loaded_config
 
 session = Session()
 session.headers = {
@@ -74,7 +75,7 @@ def view_error_handler(func: t.Callable):
             return func(*args, **kwargs)
         except Timeout:
             err = ErrorResponse(
-                detail=f"Connection timeout while connecting to API after {request_timeout}",
+                detail=f"Connection timed out while connecting to API after {request_timeout}",
                 timeout=504,
             )
         except Exception as e:
@@ -159,6 +160,8 @@ class ProxyView(MethodView):
         )
 
 
+app.add_url_rule("/<path:api_endpoint>", view_func=ProxyView.as_view("proxy"))
+
 if __name__ == "__main__":
     import argparse
 
@@ -194,7 +197,6 @@ if __name__ == "__main__":
         )
         exit(1)
     ProxyView.api_base_url = args.base_url
-    app.add_url_rule("/<path:api_endpoint>", view_func=ProxyView.as_view("proxy"))
     request_timeout = args.timeout * 60
     logging.info(
         f"Starting server at {args.host}:{args.port} - upstream : {args.base_url}"
@@ -214,3 +216,7 @@ if __name__ == "__main__":
         )
         exit(1)
     app.run(host=args.host, port=args.port, debug=False)
+
+
+else:
+    ProxyView.api_base_url = loaded_config.api_base_url_validated
