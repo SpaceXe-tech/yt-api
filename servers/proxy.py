@@ -24,7 +24,7 @@ session = Session()
 session.headers = {
     "Content-Type": "application/json",
     "Accept": "*/*",
-    "X-Application": "y2mate-clone;proxy",
+    "X-Application": "youtube-downloader-proxy",
 }
 
 request_timeout = None
