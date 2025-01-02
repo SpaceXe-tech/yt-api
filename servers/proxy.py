@@ -24,7 +24,7 @@ session = Session()
 session.headers = {
     "Content-Type": "application/json",
     "Accept": "*/*",
-    "X-Application": "youtube-downloader-proxy",
+    "X-Application": "default-proxy",
 }
 
 request_timeout = None
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="youtube-downloader--proxy",
+        prog="youtube-downloader-proxy",
         description=(
             "Meant to forward request to and fro"
             " youtube-downloader API serving on http"
