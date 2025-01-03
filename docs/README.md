@@ -92,7 +92,7 @@ YouTube flags requests without proper authorization. To work around this issue:
 
 ### Web-Interfaces
 
-The following projects provides web-interfaces for interacting with Youtube-Downloader-API
+The following projects provide web-interfaces for interacting with Youtube-Downloader-API
 
 | Index  |  🎁 Projects  | ⭐ Stars                       |
 |--------| ------------- |-------------------------------|
