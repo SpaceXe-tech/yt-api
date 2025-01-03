@@ -105,7 +105,15 @@ class ProxyView(MethodView):
     @property
     def request_headers(self) -> dict:
         """Updated upstream request headers"""
-        return {"X-Real-Ip": request.remote_addr}
+        current_forward_for_ips = request.headers.get("X-Forwarded-For", "")
+        if current_forward_for_ips:
+            updated_forwarded_for_ips = (
+                current_forward_for_ips + ", " + request.remote_addr
+            )
+        else:
+            updated_forwarded_for_ips = request.remote_addr
+
+        return {"X-Forwarded-For": updated_forwarded_for_ips}
 
     def get_absolute_url(self, endpoint: str) -> str:
         return path.join(self.api_base_url, endpoint)

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a step-by-step guide for installing and using the YouTube video downloader application. This allows users to download YouTube videos in mp4, webm, m4a and mp3 formats.
+Youtube-Downloader is a REST-API that allows users to download YouTube videos in mp4, webm, m4a and mp3 formats.
 
 ## Prerequisites
 
@@ -55,6 +55,8 @@ Finally, start the server using the following command:
 ```sh
 make runserver
 ```
+
+The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc
 
 > [!TIP]
 > For a more smoother control over the server's startup, consider using the FastAPI's cli.
