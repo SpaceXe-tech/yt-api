@@ -30,7 +30,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="y2mate-clone-static-server",
+        prog="youtube-downloader-static-server",
         description="Server for static contents ie. audio and video",
         epilog="For production environment use uwsgi.",
     )

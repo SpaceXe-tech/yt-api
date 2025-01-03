@@ -166,7 +166,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="youtube-downloader-proxy",
+        prog="youtube-downloader-proxy-server",
         description=(
             "Meant to forward request to and fro"
             " youtube-downloader API serving on http"

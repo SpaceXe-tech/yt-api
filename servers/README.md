@@ -18,7 +18,7 @@ Allows the API to only serve the dynamic contents as it focuses on static ones.
 </summary>
 
 ```
-usage: y2mate-clone-static-server [-h] [-ho HOST] [-p PORT]
+usage: youtube-downloader-static-server [-h] [-ho HOST] [-p PORT]
 
 Server for static contents ie. audio and video
 
@@ -58,12 +58,13 @@ accessible securely (https).
 </summary>
 
 ```
-usage: y2mate-clone-proxy [-h] [-ho HOST] [-p PORT] [-t TIMEOUT] base_url
+usage: youtube-downloader-proxy-server [-h] [-ho HOST] [-p PORT] [-t TIMEOUT]
+                                       base_url
 
-Proxy for y2mate-clone. Meant to forward request to and fro an insecure API
+Meant to forward request to and fro youtube-downloader API serving on http
 
 positional arguments:
-  base_url              Y2mate-clone API base url.
+  base_url              Youtube-Downloader API base url.
 
 options:
   -h, --help            show this help message and exit
@@ -73,6 +74,7 @@ options:
                         API request call timeout in minutest - 30
 
 Not meant for production purposes.
+
 
 ```
 
