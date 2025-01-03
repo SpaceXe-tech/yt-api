@@ -1,8 +1,8 @@
-<h1 align="center">YouTube Video Downloader</h1>
+<h1 align="center">YouTube Video Downloader API</h1>
 
 ## Overview
 
-Youtube-Downloader is a REST-API that allows users to download YouTube videos in mp4, webm, m4a and mp3 formats.
+A REST-API that provide endpoints for searching and downloading YouTube videos in mp4, webm, m4a and mp3 formats in different qualities.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ Follow these steps to install and configure the YouTube video downloader:
 First, clone the repository using the following command:
 
 ```sh
-git clone https://github.com/Simatwa/youtube-downloader.git
+git clone https://github.com/Simatwa/youtube-downloader-api.git
 cd youtube-downloader
 ```
 
@@ -56,12 +56,12 @@ Finally, start the server using the following command:
 make runserver
 ```
 
-The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc
+The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc>
 
 > [!TIP]
 > For a more smoother control over the server's startup, consider using the FastAPI's cli.
-> Running `fastapi run app` will equally fire-up the server.
-> For more help info such as changing **host** and **port**, you can simply run `fastapi run --help`.
+> Running `$ fastapi run app` will equally fire-up the server.
+> For more help info such as changing **host** and **port**, you can simply run `$ fastapi run --help`.
 
 ## Optimizing Server Performance
 
