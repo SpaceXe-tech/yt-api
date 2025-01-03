@@ -1,5 +1,15 @@
 <h1 align="center">YouTube Video Downloader API</h1>
 
+
+<p align="center">
+<a href="LICENSE"><img alt="License" src="https://img.shields.io/static/v1?logo=license&color=Blue&message=Unlicense&label=License"/></a>
+<a href="https://github.com/Simatwa/youtube-video-downloader/releases"><img src="https://img.shields.io/github/v/release/Simatwa/youtube-video-downloader?label=Release&logo=github" alt="Latest release"></img></a>
+<a href="https://github.com/Simatwa/youtube-video-downloader/releases"><img src="https://img.shields.io/github/release-date/Simatwa/youtube-video-downloader?label=Release date&logo=github" alt="release date"></img></a>
+<a href="https://github.com/psf/black"><img alt="Black" src="https://img.shields.io/badge/code%20style-black-000000.svg"/></a>
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com/Simatwa/youtube-video-downloader"/></a>
+</p>
+
+
 ## Overview
 
 A REST-API that provide endpoints for searching, extracting metadata and downloading YouTube videos in mp4, webm, m4a and mp3 formats in different qualities.
