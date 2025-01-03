@@ -36,7 +36,7 @@ class EnvVariables(BaseModel):
     filename_prefix: Optional[str] = ""
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
-    search_limit: Optional[int] = 5
+    search_limit: Optional[int] = 50
     video_info_cache_period_in_hrs: Optional[PositiveInt] = 4
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
     default_extension: Literal["mp4", "webm"] = "webm"
