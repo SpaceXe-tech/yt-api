@@ -90,6 +90,16 @@ YouTube flags requests without proper authorization. To work around this issue:
 1. [Static Server](../servers/static.py)
 2. [Proxy Server](../servers/proxy.py)
 
+### Web-Interfaces
+
+The following projects provides web-interfaces for interacting with Youtube-Downloader-API
+
+| Index  |  🎁 Projects  | ⭐ Stars                       |
+|--------| ------------- |-------------------------------|
+| 0      | [y2mate-clone](https://github.com/Simatwa/y2mate-clone) |  [![Stars](https://img.shields.io/github/stars/Simatwa/y2mate-clone?style=flat-square&labelColor=343b41)](https://github.com/Simatwa/y2mate-clone/stargazers) |
+
+_Feel free to add another web-interface to this list._
+
 ## Additional Resources
 
 For detailed information on extracting PO Tokens, refer to the following resource:

@@ -23,7 +23,7 @@ app = FastAPI(
     contact=loaded_config.contacts,
     license_info={
         "name": "GPLv3",
-        "url": "https://raw.githubusercontent.com/Simatwa/youtube-downloader/refs/heads/main/LICENSE",
+        "url": "https://raw.githubusercontent.com/Simatwa/youtube-downloader-api/refs/heads/main/LICENSE",
     },
     docs_url="/api/docs",
     redoc_url="/api/redoc",
