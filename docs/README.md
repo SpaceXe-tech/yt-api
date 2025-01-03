@@ -2,7 +2,7 @@
 
 ## Overview
 
-A REST-API that provide endpoints for searching and downloading YouTube videos in mp4, webm, m4a and mp3 formats in different qualities.
+A REST-API that provide endpoints for searching, extracting metadata and downloading YouTube videos in mp4, webm, m4a and mp3 formats in different qualities.
 
 ## Prerequisites
 
