@@ -21,9 +21,6 @@ A REST-API that provide endpoints for searching, extracting metadata and downloa
 
 ## Installation Guide
 
-> [!NOTE]
-> This guide assumes you're running on a *nix system.
-
 Follow these steps to install and configure the YouTube video downloader:
 
 ### Step 1: Clone Repository
@@ -48,7 +45,7 @@ source venv/bin/activate
 After activating the virtual environment, install the required dependencies:
 
 ```sh
-make install
+pip install -r requirements.txt
 ```
 
 ### Step 3: Configure Environment Variables
@@ -63,7 +60,7 @@ Copy [configs/env/*](../configs/env/) file to the root directory of the project 
 Finally, start the server using the following command:
 
 ```sh
-make runserver
+python -m fastapi run app
 ```
 
 The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc>
