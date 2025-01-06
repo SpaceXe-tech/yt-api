@@ -61,7 +61,7 @@ class EnvVariables(BaseModel):
     noresizebuffer: Optional[bool] = None
     retries: Optional[int] = 2
     continuedl: Optional[bool] = False
-    noprogress: Optional[bool] = True
+    noprogress: Optional[bool] = False
     nopart: Optional[bool] = False
     concurrent_fragment_downloads: Optional[int] = 1
     # YoutubeDL params
