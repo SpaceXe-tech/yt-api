@@ -81,7 +81,7 @@ def router_exception_handler(func: t.Callable):
                 detail = msg[0]
                 status_code = status.HTTP_403_FORBIDDEN
             else:
-                detail = "Server is unable to download the targeted media file!"
+                detail = "Server encountered an issue while trying to handle that request!"
                 status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
             raise HTTPException(status_code, detail)
@@ -89,7 +89,7 @@ def router_exception_handler(func: t.Callable):
             logger.exception(e)
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
             detail = (
-                "Server encountered an issue while trying to handle that request!",
+                "Server encountered an issue while trying to handle that request!"
             )
             raise HTTPException(status_code=status_code, detail=detail)
 
