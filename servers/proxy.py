@@ -18,7 +18,6 @@ from dataclasses import dataclass
 from os import path
 import logging
 import typing as t
-from app.config import loaded_config
 
 session = Session()
 session.headers = {
@@ -227,4 +226,6 @@ if __name__ == "__main__":
 
 
 else:
+    from app.config import loaded_config
+
     ProxyView.api_base_url = loaded_config.api_base_url_validated

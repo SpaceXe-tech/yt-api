@@ -74,7 +74,7 @@ The docs will be accessible from  <http://localhost:8000/api/docs> and redocs fr
 
 To improve server performance and minimize load, I recommend setting up a separate server for handling static contents (audios and videos). To do this:
 
-1. Execute the [`static_server.py`](servers/static_server.py) file.
+1. Execute the [`static-server`](../servers/static.py) file.
 2. Configure the API using the `static_server_url` key with the URL of the static server.
 
 > [!IMPORTANT]

@@ -81,16 +81,16 @@ def router_exception_handler(func: t.Callable):
                 detail = msg[0]
                 status_code = status.HTTP_403_FORBIDDEN
             else:
-                detail = "Server encountered an issue while trying to handle that request!"
+                detail = (
+                    "Server encountered an issue while trying to handle that request!"
+                )
                 status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
             raise HTTPException(status_code, detail)
         except Exception as e:
             logger.exception(e)
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-            detail = (
-                "Server encountered an issue while trying to handle that request!"
-            )
+            detail = "Server encountered an issue while trying to handle that request!"
             raise HTTPException(status_code=status_code, detail=detail)
 
     return decorator
