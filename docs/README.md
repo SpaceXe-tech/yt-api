@@ -70,6 +70,13 @@ The docs will be accessible from  <http://localhost:8000/api/docs> and redocs fr
 > Running `$ fastapi run app` will equally fire-up the server.
 > For more help info such as changing **host** and **port**, you can simply run `$ fastapi run --help`.
 
+## Serving frontend contents
+
+In order to serve frontend contents, you have to pass directory containing the contents to the app using `frontend_dir` key in the [configuration file](../configs/env/example).
+
+> [!NOTE]
+> The frontend directory should contain `index.html` file.
+
 ## Optimizing Server Performance
 
 To improve server performance and minimize load, I recommend setting up a separate server for handling static contents (audios and videos). To do this:

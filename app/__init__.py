@@ -3,8 +3,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.events import register_events
-from app.utils import create_temp_dirs
+from app.utils import create_temp_dirs, logger
 from app.static import static_app
 from a2wsgi import WSGIMiddleware
 from app.config import loaded_config
@@ -37,9 +38,22 @@ if not loaded_config.static_server_url:
     app.mount("/static", WSGIMiddleware(static_app, workers=50))
 
 
-@app.get("/", include_in_schema=False)
-async def home():
-    return RedirectResponse("/api/docs")
+if loaded_config.frontend_dir:
+    # Lets's serve the frontend from /
+    logger.info(f"Serving frontend. Frontend dir: {loaded_config.frontend_dir}")
+    app.mount(
+        "/",
+        StaticFiles(directory=loaded_config.frontend_dir, check_dir=True, html=True),
+        name="frontend",
+    )
+
+else:
+    # Redirect / to docs
+    logger.info("Not serving frontend. Redirecting / to /api/docs")
+
+    @app.get("/", include_in_schema=False)
+    async def home():
+        return RedirectResponse("/api/docs")
 
 
 @app.get("/api/live-check", include_in_schema=False)

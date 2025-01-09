@@ -17,6 +17,8 @@ contact_email = user@localhost.dev
 contact_url = http://localhost:8000/user
 # URL pointing to contact_name's website
 
+frontend_dir=
+# Path to directory containing the frontend files
 
 
 ### API CONFIGURATIONS ###########

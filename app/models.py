@@ -40,6 +40,7 @@ class EnvVariables(BaseModel):
     video_info_cache_period_in_hrs: Optional[PositiveInt] = 4
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
     default_extension: Literal["mp4", "webm"] = "webm"
+    frontend_dir: Optional[str] = None
 
     # static server options
     static_server_url: Optional[str] = None
@@ -164,6 +165,17 @@ class EnvVariables(BaseModel):
         cookiefile = Path(value)
         if not cookiefile.exists() or not cookiefile.is_file():
             raise TypeError(f"Invalid cookiefile passed - {value}")
+        return value
+
+    @field_validator("frontend_dir")
+    def validate_frontend_dir(value):
+        if not value:
+            return
+        frontend_dir = Path(value)
+        if not frontend_dir.exists() or not frontend_dir.is_dir():
+            raise TypeError(f"Invalid frontend_dir passed - {value}")
+        if not frontend_dir.joinpath("index.html").exists():
+            raise TypeError(f"Frontend-dir must contain index.html file - {value}")
         return value
 
     @field_validator("static_server_url")
