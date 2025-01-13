@@ -135,7 +135,10 @@ def get_video_metadata(
         thumbnail=extracted_info.thumbnail,
         audio=audio_formats,
         video=video_formats,
-        default_audio_format=loaded_config.default_audio_format,
+        format=dict(
+            audio=loaded_config.default_audio_format,
+            video=loaded_config.default_extension,
+        ),
     )
 
 

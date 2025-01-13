@@ -1,6 +1,11 @@
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional, Literal
-from yt_dlp_bonus.constants import mediaQualitiesType, audioBitratesType
+from yt_dlp_bonus.constants import (
+    mediaQualitiesType,
+    audioBitratesType,
+    audioExtensionsType,
+    videoExtensionsType,
+)
 
 
 class SearchVideosResponse(BaseModel):
@@ -92,6 +97,10 @@ class VideoMetadataResponse(BaseModel):
         quality: str  # mediaQualitiesType
         size: str
 
+    class MediaFormats(BaseModel):
+        audio: audioExtensionsType
+        video: videoExtensionsType
+
     id: str
     title: str
     channel: Optional[str] = None
@@ -100,32 +109,34 @@ class VideoMetadataResponse(BaseModel):
     thumbnail: HttpUrl
     audio: list[MediaMetadata]
     video: list[MediaMetadata]
-    default_audio_format: Literal["webm", "m4a"]
+    format: MediaFormats
 
     model_config = {
         "json_schema_extra": {
-            "id": "lw5tB9LQQVM",
-            "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
-            "channel": "MariooOfficial",
-            "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
-            "duration_string": "2:34",
-            "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/sddefault.jpg",
-            "default_audio_format": "m4a",
-            "audio": [
-                {"quality": "ultralow", "size": "682.92 KB"},
-                {"quality": "low", "size": "1.32 MB"},
-                {"quality": "medium", "size": "2.6 MB"},
-            ],
-            "video": [
-                {"quality": "144p", "size": "4.14 MB"},
-                {"quality": "240p", "size": "5.99 MB"},
-                {"quality": "360p", "size": "10.43 MB"},
-                {"quality": "480p", "size": "14.88 MB"},
-                {"quality": "720p", "size": "31.64 MB"},
-                {"quality": "1080p", "size": "52.14 MB"},
-                {"quality": "1440p", "size": "171.99 MB"},
-                {"quality": "2160p", "size": "342.56 MB"},
-            ],
+            "example": {
+                "id": "lw5tB9LQQVM",
+                "title": "Marioo feat Fathermoh, Sean Mmg, Ssaru & Motif - Statue (Official Music Video)",
+                "channel": "MariooOfficial",
+                "uploader_url": "https://www.youtube.com/@MariooOfficialMusic",
+                "duration_string": "2:34",
+                "thumbnail": "https://i.ytimg.com/vi/lw5tB9LQQVM/sddefault.jpg",
+                "audio": [
+                    {"quality": "ultralow", "size": "682.92 KB"},
+                    {"quality": "low", "size": "1.32 MB"},
+                    {"quality": "medium", "size": "2.6 MB"},
+                ],
+                "video": [
+                    {"quality": "144p", "size": "4.14 MB"},
+                    {"quality": "240p", "size": "5.99 MB"},
+                    {"quality": "360p", "size": "10.43 MB"},
+                    {"quality": "480p", "size": "14.88 MB"},
+                    {"quality": "720p", "size": "31.64 MB"},
+                    {"quality": "1080p", "size": "52.14 MB"},
+                    {"quality": "1440p", "size": "171.99 MB"},
+                    {"quality": "2160p", "size": "342.56 MB"},
+                ],
+                "format": {"audio": "m4a", "video": "webm"},
+            }
         }
     }
 

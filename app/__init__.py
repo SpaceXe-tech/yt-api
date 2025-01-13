@@ -43,6 +43,7 @@ def test_live():
     """Test API's live status"""
     return {}
 
+
 if loaded_config.frontend_dir:
     # Lets's serve the frontend from /
     logger.info(f"Serving frontend. Frontend dir: {loaded_config.frontend_dir}")
@@ -59,6 +60,7 @@ else:
     @app.get("/", include_in_schema=False)
     async def home():
         return RedirectResponse("/api/docs")
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
