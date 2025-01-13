@@ -135,7 +135,7 @@ class VideoMetadataResponse(BaseModel):
                     {"quality": "1440p", "size": "171.99 MB"},
                     {"quality": "2160p", "size": "342.56 MB"},
                 ],
-                "format": {"audio": "m4a", "video": "webm"},
+                "format": {"audio": "m4a", "video": "mp4"},
             }
         }
     }
