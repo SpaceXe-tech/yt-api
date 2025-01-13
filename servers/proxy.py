@@ -128,7 +128,7 @@ class ProxyView(MethodView):
         return response_headers
 
     @view_error_handler
-    def get(self, api_endpoint: str=""):
+    def get(self, api_endpoint: str = ""):
         """Handles get requests"""
         resp = session.get(
             self.get_absolute_url(api_endpoint),
@@ -165,6 +165,7 @@ class ProxyView(MethodView):
             headers=self.process_resp_headers(resp.headers),
             content_type=resp.headers.get("content-type"),
         )
+
 
 app.add_url_rule("/", view_func=ProxyView.as_view("proxy_index"))
 app.add_url_rule("/<path:api_endpoint>", view_func=ProxyView.as_view("proxy"))

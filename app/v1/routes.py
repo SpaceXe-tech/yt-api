@@ -126,6 +126,7 @@ def get_video_metadata(
                     size=get_size_string(format.audio_video_size),
                 )
             )
+
     return models.VideoMetadataResponse(
         id=extracted_info.id,
         title=extracted_info.title,
@@ -138,6 +139,12 @@ def get_video_metadata(
         format=dict(
             audio=loaded_config.default_audio_format,
             video="mp4",
+        ),
+        others=dict(
+            like_count=extracted_info.like_count,
+            views_count=extracted_info.view_count,
+            categories=extracted_info.categories,
+            tags=extracted_info.tags,
         ),
     )
 

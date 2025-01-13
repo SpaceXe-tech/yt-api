@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 from yt_dlp_bonus.constants import (
     mediaQualitiesType,
     audioBitratesType,
@@ -101,6 +101,12 @@ class VideoMetadataResponse(BaseModel):
         audio: audioExtensionsType
         video: videoExtensionsType
 
+    class OtherMetadata(BaseModel):
+        like_count: int
+        views_count: int
+        categories: list[str]
+        tags: list[str]
+
     id: str
     title: str
     channel: Optional[str] = None
@@ -110,6 +116,7 @@ class VideoMetadataResponse(BaseModel):
     audio: list[MediaMetadata]
     video: list[MediaMetadata]
     format: MediaFormats
+    others: OtherMetadata
 
     model_config = {
         "json_schema_extra": {
