@@ -137,7 +137,7 @@ def get_video_metadata(
         video=video_formats,
         format=dict(
             audio=loaded_config.default_audio_format,
-            video=loaded_config.default_extension,
+            video="mp4",
         ),
     )
 
