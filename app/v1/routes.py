@@ -143,8 +143,8 @@ def get_video_metadata(
         others=dict(
             like_count=extracted_info.like_count,
             views_count=extracted_info.view_count,
-            categories=extracted_info.categories,
-            tags=extracted_info.tags,
+            categories=extracted_info.categories or [],
+            tags=extracted_info.tags or [],
         ),
     )
 
