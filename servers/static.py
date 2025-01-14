@@ -23,7 +23,9 @@ ref_directory = (
 @app.get("/file/<path:name>")
 def send_static_file(name):
     download = request.args.get("download", "0") in ("1", "true")
-    return send_from_directory(ref_directory, unquote(name), as_attachment=download)
+    response = send_from_directory(ref_directory, unquote(name), as_attachment=download)
+    response.headers["Cache-Control"] = "public, max-age=7200"
+    return response
 
 
 if __name__ == "__main__":
