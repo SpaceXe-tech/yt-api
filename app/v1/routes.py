@@ -95,16 +95,16 @@ def search_videos(
     return models.SearchVideosResponse(query=q, results=videos_found)
 
 
-@router.post("/metadata", name="Video metadata")
+@router.get("/metadata", name="Video metadata")
 @router_exception_handler
 def get_video_metadata(
-    payload: models.VideoMetadataPayload,
+    url: str = Query(description="Video URL or ID"),
 ) -> models.VideoMetadataResponse:
-    """Get metadata of a specific video
+    """Get metadata of a specific video.
     - Similar subsequent requests will be faster as they will be served
-    from cache for a few hours.
+    from the cache for a few hours.
     """
-    extracted_info = get_extracted_info(yt=yt, url=payload.url)
+    extracted_info = get_extracted_info(yt=yt, url=url)
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info, ext=loaded_config.default_extension
     )

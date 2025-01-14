@@ -78,20 +78,6 @@ class SearchVideosResponse(BaseModel):
     }
 
 
-class VideoMetadataPayload(BaseModel):
-    url: str = Field(description="Link to the Youtube video or video id")
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {"url": "https://youtu.be/lw5tB9LQQVM"},
-                {"url": "https://www.youtube.com/watch?v=lw5tB9LQQVM"},
-                {"url": "lw5tB9LQQVM"},
-            ]
-        }
-    }
-
-
 class VideoMetadataResponse(BaseModel):
     class MediaMetadata(BaseModel):
         quality: str  # mediaQualitiesType
