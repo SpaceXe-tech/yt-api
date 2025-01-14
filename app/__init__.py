@@ -75,8 +75,16 @@ async def add_process_time_header(request: Request, call_next):
 async def add_cache_header(request: Request, call_next):
     """Browsers to cache the response for 30 minutes"""
     response: Response = await call_next(request)
-    if request.url.path.startswith("/api/v1") and response.status_code == 200:
-        response.headers["Cache-Control"] = "public, max-age=1800"
+    if response.status_code == 200:
+        """
+        if request.url.path.startswith("/api/v1"):
+            response.headers["Cache-Control"] = "public, max-age=1800"
+        else:
+            # static contents
+            response.headers["Cache-Control"] = "public, max-age=86400"
+        """
+        response.headers["Cache-Control"] = "public, max-age=86400"
+
     return response
 
 
