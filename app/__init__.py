@@ -1,6 +1,6 @@
 """Youtube downloader app"""
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -68,6 +68,15 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+
+@app.middleware("http")
+async def add_cache_header(request: Request, call_next):
+    """Browsers to cache the response for 30 minutes"""
+    response: Response = await call_next(request)
+    if request.url.path.startswith("/api/v1") and response.status_code == 200:
+        response.headers["Cache-Control"] = "public, max-age=1800"
     return response
 
 
