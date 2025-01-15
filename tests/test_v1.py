@@ -31,7 +31,7 @@ def test_video_search(query, limit):
     ],
 )
 def test_video_metadata(url):
-    resp = client.post("/api/v1/metadata", json=dict(url=url))
+    resp = client.get("/api/v1/metadata", params=dict(url=url))
     assert resp.is_success
     models.VideoMetadataResponse(**resp.json())
 
