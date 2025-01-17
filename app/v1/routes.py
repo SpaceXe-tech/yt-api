@@ -6,19 +6,25 @@ from app.utils import (
     router_exception_handler,
     get_absolute_link_to_static_file,
 )
-from app.config import loaded_config, download_dir
+from app.config import loaded_config, download_dir, temp_dir
 from pathlib import Path
 from os import path
-from yt_dlp_bonus import YoutubeDLBonus, Download
-from yt_dlp_bonus.constants import audioQualities
+from yt_dlp_bonus import YoutubeDLBonus, Downloader
+from yt_dlp_bonus.constants import audioQualities, videoQualities
 from yt_dlp_bonus.utils import get_size_string
 from functools import lru_cache
 
 router = APIRouter(prefix="/v1")
 
-yt = YoutubeDLBonus(params=loaded_config.ytdlp_params)
+yt_params = loaded_config.ytdlp_params
 
-download = Download(
+yt_params.update(
+    {"paths": {"home": download_dir.as_posix(), "temp": temp_dir.as_posix()}}
+)
+
+yt = YoutubeDLBonus(params=yt_params)
+
+download = Downloader(
     yt=yt,
     working_directory=download_dir,
     clear_temps=loaded_config.clear_temps,
@@ -168,21 +174,32 @@ def process_video_for_download(
             else "webm"
         ),
     )
-    updated_video_formats = yt.update_audio_video_size(
-        video_formats,
-        payload.quality if payload.quality in audioQualities else "medium",
-    )
-    saved_to: Path = download.run(
-        title=extracted_info.title,
-        qualities_format=updated_video_formats,
-        quality=payload.quality,
-        bitrate=payload.bitrate,
-    )
-    filename = saved_to.name
+    target_format = video_formats.get(payload.quality)
+    if payload.quality in audioQualities:
+        assert target_format, (
+            f"The video does not support the audio quality '{payload.quality}'. "
+            f"Try other audio qualities like {', '.join([quality for quality in audioQualities if quality != payload.quality])}."
+        )
+        processed_info_dict = download.ydl_run_audio(
+            extracted_info,
+            audio_format=target_format.format_id,
+            bitrate=payload.bitrate,
+        )
+    else:
+        assert target_format, (
+            f"The video does not support the video quality '{payload.quality}'. "
+            f"Try other video qualities like {', '.join([quality for quality in videoQualities if quality != payload.quality])}."
+        )
+        processed_info_dict = download.ydl_run_video(
+            extracted_info, video_format=target_format.format_id, output_ext="mp4"
+        )
+        # TODO : Consider audio_format as well
+
+    filepath = Path(processed_info_dict["requested_downloads"][0]["filepath"])
 
     return models.MediaDownloadResponse(
         is_success=True,
-        filename=saved_to.name,
-        filesize=get_size_string(path.getsize(saved_to)),
-        link=get_absolute_link_to_static_file(filename, request),
+        filename=filepath.name,
+        filesize=get_size_string(path.getsize(filepath)),
+        link=get_absolute_link_to_static_file(filepath.name, request),
     )

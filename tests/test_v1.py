@@ -54,29 +54,10 @@ def test_download_processing(url, quality, bitrate):
             bitrate=bitrate,
         ),
     )
+    if not resp.is_success:
+        print(resp.text)
     assert resp.is_success
     models.MediaDownloadResponse(**resp.json())
-
-
-@pytest.mark.parametrize(
-    ["url", "quality", "audio_bitrate", "audio_only"],
-    [
-        ("https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk", "1080p", "128k", False),
-        ("S3wsCRJVUyg", "medium", "192k", True),
-    ],
-)
-def test_download_media(url, quality, audio_bitrate, audio_only):
-    resp = client.post(
-        "/api/v1/download",
-        json=dict(
-            url=url,
-            quality=quality,
-            audio_bitrate=audio_bitrate,
-            audio_only=audio_only,
-        ),
-    )
-    assert resp.is_success
-    media = models.MediaDownloadResponse(**resp.json())
     # This will raise 404 since the static contents are served by flask (wsgi).
     # static_resp = client.get(str(media.link))
     # assert static_resp.is_success

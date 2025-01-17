@@ -8,3 +8,5 @@ loaded_config = EnvVariables(**dotenv_values())
 working_dir = Path(loaded_config.working_directory)
 
 download_dir = working_dir / "downloads"
+
+temp_dir = working_dir / "temps"
