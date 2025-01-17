@@ -4,6 +4,7 @@ import app.v1.models as models
 from app.events import event_startup_create_tempdirs, event_startup_create_tables
 
 video_link = "https://youtu.be/S3wsCRJVUyg?si=SjN17MR1-u7BPgxk?si=svRtQPHef9TSMABt"
+# https://youtu.be/R3GfuzLMPkA?si=YItOxtgw3LAjKps1
 
 
 def run_startup_events():
