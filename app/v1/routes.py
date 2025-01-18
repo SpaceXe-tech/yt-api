@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Query, Request, WebSocket
+from fastapi import APIRouter, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi import status, HTTPException
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
 from app.utils import (
     router_exception_handler,
     get_absolute_link_to_static_file,
+    silence_websocket_exceptions,
 )
 from app.config import loaded_config, download_dir, temp_dir
 from pathlib import Path
@@ -19,6 +20,7 @@ from pydantic import ValidationError
 from app.models import CustomWebsocketResponse
 from app.utils import logger
 import json
+from starlette.websockets import WebSocketState
 
 router = APIRouter(prefix="/v1")
 
@@ -232,6 +234,11 @@ async def download_websocket_handler(websocket: WebSocket):
         async def send_progress(response: CustomWebsocketResponse):
             await websocket.send_json(response.model_dump())
 
+        @silence_websocket_exceptions
+        async def close_websocket():
+            if websocket.state == WebSocketState.CONNECTED:
+                await websocket.close()
+
         payload_dict: dict = await websocket.receive_json()
         request_payload = models.MediaDownloadProcessPayload(**payload_dict)
 
@@ -263,7 +270,8 @@ async def download_websocket_handler(websocket: WebSocket):
                     )
                 )
 
-        def initiate_download():
+        @silence_websocket_exceptions
+        def initiate_download() -> models.MediaDownloadResponse:
             try:
                 return real_download_process(
                     request=websocket,
@@ -283,18 +291,22 @@ async def download_websocket_handler(websocket: WebSocket):
         download_report = await asyncio.get_running_loop().run_in_executor(
             None, initiate_download
         )
-        await send_progress(
-            CustomWebsocketResponse(
-                status="completed", detail=download_report.model_dump()
+        if isinstance(download_report, models.MediaDownloadResponse):
+            await send_progress(
+                CustomWebsocketResponse(
+                    status="completed", detail=download_report.model_dump()
+                )
             )
-        )
+        else:
+            await close_websocket()
 
     except ValidationError as e:
         error = CustomWebsocketResponse(
             status="error", detail=dict(errors=json.loads(e.json()))
         )
         await send_progress(error)
-        await websocket.close()
+        await close_websocket()
 
     except Exception as e:
         logger.error(f"Websocket error {e}")
+        await close_websocket()

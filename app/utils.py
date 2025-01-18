@@ -128,5 +128,36 @@ def get_absolute_link_to_static_file(
         return os.path.join(loaded_config.static_server_url.__str__(), filename)
     else:
         return os.path.join(
-            f"{request.url.scheme}://{request.url.netloc}", "static", "file", filename
+            # {request.url.scheme}:
+            f"//{request.url.netloc}",
+            "static",
+            "file",
+            filename,
         )
+
+
+def silence_websocket_exceptions(func):
+    """Exception handler for websockets. Makes them die in peace."""
+    if isinstance(func, t.Coroutine):
+
+        @wraps(func)
+        async def decorator(*args, **kwargs):
+            try:
+                response = await func(*args, **kwargs)
+                return response
+            except Exception as e:
+                logger.error(f"Exception on ({func.__name__}) - {e}")
+
+        return decorator
+
+    else:
+
+        @wraps(func)
+        def decorator(*args, **kwargs):
+            try:
+                response = func(*args, **kwargs)
+                return response
+            except Exception as e:
+                logger.error(f"Exception on ({func.__name__}) - {e}")
+
+        return decorator
