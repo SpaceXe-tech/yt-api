@@ -247,6 +247,8 @@ async def download_websocket_handler(websocket: WebSocket):
                 progress = d.get("downloaded_bytes", 0) / d.get("total_bytes", 1) * 100
                 speed = d.get("speed", 0)
                 eta = d.get("eta", 0)
+                if not speed:
+                    return
                 progress_data = {
                     "progress": f"{progress:.1f}%",
                     "speed": f"{speed/1024/1024:.1f} MB/s",
