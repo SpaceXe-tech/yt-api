@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Query, Request, WebSocket
 from fastapi import status, HTTPException
 import app.v1.models as models
 from app.v1.utils import get_extracted_info
@@ -13,6 +13,12 @@ from yt_dlp_bonus import YoutubeDLBonus, Downloader
 from yt_dlp_bonus.constants import audioQualities, videoQualities
 from yt_dlp_bonus.utils import get_size_string
 from functools import lru_cache
+import typing as t
+import asyncio
+from pydantic import ValidationError
+from app.models import CustomWebsocketResponse
+from app.utils import logger
+import json
 
 router = APIRouter(prefix="/v1")
 
@@ -24,7 +30,7 @@ yt_params.update(
 
 yt = YoutubeDLBonus(params=yt_params)
 
-download = Downloader(
+downloader = Downloader(
     yt=yt,
     working_directory=download_dir,
     clear_temps=loaded_config.clear_temps,
@@ -156,7 +162,6 @@ def get_video_metadata(
 
 
 @router.post("/download", name="Process download")
-@router_exception_handler
 def process_video_for_download(
     request: Request, payload: models.MediaDownloadProcessPayload
 ) -> models.MediaDownloadResponse:
@@ -164,6 +169,15 @@ def process_video_for_download(
     - To download the media file: Add parameter `download` with value
     `true` to the returned link i.e `?download=true`.
     """
+    return real_download_process(request, payload)
+
+
+@router_exception_handler
+def real_download_process(
+    request: t.Union[Request, WebSocket],
+    payload: models.MediaDownloadProcessPayload,
+    progress_hooks: list[t.Callable] = [],
+) -> models.MediaDownloadResponse:
     extracted_info = get_extracted_info(yt=yt, url=payload.url)
     video_formats = yt.get_video_qualities_with_extension(
         extracted_info,
@@ -180,20 +194,24 @@ def process_video_for_download(
             f"The video does not support the audio quality '{payload.quality}'. "
             f"Try other audio qualities like {', '.join([quality for quality in audioQualities if quality != payload.quality])}."
         )
-        processed_info_dict = download.ydl_run_audio(
+        processed_info_dict = downloader.ydl_run_audio(
             extracted_info,
             audio_format=target_format.format_id,
             bitrate=payload.bitrate,
+            progress_hooks=progress_hooks,
         )
     else:
         assert target_format, (
             f"The video does not support the video quality '{payload.quality}'. "
             f"Try other video qualities like {', '.join([quality for quality in videoQualities if quality != payload.quality])}."
         )
-        processed_info_dict = download.ydl_run_video(
-            extracted_info, video_format=target_format.format_id, output_ext="mp4"
+        processed_info_dict = downloader.ydl_run_video(
+            extracted_info,
+            video_format=target_format.format_id,
+            output_ext="mp4",
+            progress_hooks=progress_hooks,
         )
-        # TODO : Consider audio_format as well
+        # TODO: Consider audio_format as well
 
     filepath = Path(processed_info_dict["requested_downloads"][0]["filepath"])
 
@@ -203,3 +221,80 @@ def process_video_for_download(
         filesize=get_size_string(path.getsize(filepath)),
         link=get_absolute_link_to_static_file(filepath.name, request),
     )
+
+
+@router.websocket("/download/ws", name="Process download (websocket)")
+async def download_websocket_handler(websocket: WebSocket):
+    await websocket.accept()
+
+    try:
+
+        async def send_progress(response: CustomWebsocketResponse):
+            await websocket.send_json(response.model_dump())
+
+        payload_dict: dict = await websocket.receive_json()
+        request_payload = models.MediaDownloadProcessPayload(**payload_dict)
+
+        def progress_hook(d: dict):
+            if d["status"] == "downloading":
+                progress = d.get("downloaded_bytes", 0) / d.get("total_bytes", 1) * 100
+                speed = d.get("speed", 0)
+                eta = d.get("eta", 0)
+                progress_data = {
+                    "progress": f"{progress:.1f}%",
+                    "speed": f"{speed/1024/1024:.1f} MB/s",
+                    "eta": f"{eta//60}:{eta%60:02d}",
+                }
+                asyncio.run(
+                    send_progress(
+                        CustomWebsocketResponse(
+                            status="downloading", detail=progress_data
+                        )
+                    )
+                )
+
+            elif d["status"] == "finished":
+                filename = d.get("filename", "").split("/")[-1]
+                asyncio.run(
+                    send_progress(
+                        CustomWebsocketResponse(
+                            status="finished", detail=dict(filename=filename)
+                        )
+                    )
+                )
+
+        def initiate_download():
+            try:
+                return real_download_process(
+                    request=websocket,
+                    payload=request_payload,
+                    progress_hooks=[progress_hook],
+                )
+            except HTTPException as e:
+                asyncio.run(
+                    send_progress(
+                        CustomWebsocketResponse(
+                            status="error",
+                            detail=dict(status_code=e.status_code, text=e.detail),
+                        )
+                    )
+                )
+
+        download_report = await asyncio.get_running_loop().run_in_executor(
+            None, initiate_download
+        )
+        await send_progress(
+            CustomWebsocketResponse(
+                status="completed", detail=download_report.model_dump()
+            )
+        )
+
+    except ValidationError as e:
+        error = CustomWebsocketResponse(
+            status="error", detail=dict(errors=json.loads(e.json()))
+        )
+        await send_progress(error)
+        await websocket.close()
+
+    except Exception as e:
+        logger.error(f"Websocket error {e}")

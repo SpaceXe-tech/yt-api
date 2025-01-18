@@ -14,6 +14,11 @@ import os
 import logging
 
 
+class CustomWebsocketResponse(BaseModel):
+    status: Literal["downloading", "finished", "completed", "error"]
+    detail: dict
+
+
 class EnvVariables(BaseModel):
     # contacts
     contact_name: Optional[str] = "Unknown"

@@ -17,7 +17,7 @@ from yt_dlp.utils import DownloadError
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
 from app.config import download_dir, temp_dir, loaded_config
-from fastapi import Request
+from fastapi import Request, WebSocket
 
 logger = logging.getLogger(__file__)
 
@@ -120,7 +120,9 @@ def get_video_id(url: str) -> str:
     raise InvalidVideoUrl(f"Invalid video url passed - {url}")
 
 
-def get_absolute_link_to_static_file(filename: str, request: Request):
+def get_absolute_link_to_static_file(
+    filename: str, request: t.Union[Request, WebSocket]
+):
     """Get absolute url to a static file"""
     if loaded_config.static_server_url:
         return os.path.join(loaded_config.static_server_url.__str__(), filename)
