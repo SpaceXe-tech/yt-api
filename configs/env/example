@@ -121,7 +121,7 @@ updatetime = true
 verbose = false
 # Print additional info to stdout.
 
-quiet = false
+quiet = true
 # Do not print messages to stdout.
 
 allow_multiple_video_streams = false
