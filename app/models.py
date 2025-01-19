@@ -77,6 +77,8 @@ class EnvVariables(BaseModel):
     allow_multiple_audio_streams: Optional[bool] = None
     geo_bypass: Optional[bool] = True
     geo_bypass_country: Optional[str] = None
+    # Post-download opts
+    embed_subtitles: Optional[bool] = False
 
     @property
     def ytdlp_params(self) -> dict[str, int | bool | None]:

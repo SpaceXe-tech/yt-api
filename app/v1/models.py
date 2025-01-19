@@ -138,6 +138,7 @@ class MediaDownloadProcessPayload(BaseModel):
     url: str = Field(description="Link to the Youtube video or video id")
     quality: mediaQualitiesType
     bitrate: audioBitratesType | None = None
+    x_lang: Optional[str] = "en"
 
     model_config = {
         "json_schema_extra": {

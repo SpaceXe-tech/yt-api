@@ -137,3 +137,8 @@ geo_bypass = false
 # Two-letter ISO 3166-2 country code that will be used for
 # explicit geographic restriction bypassing via faking
 # X-Forwarded-For HTTP header
+
+# POST-DOWNLOAD OPTIONS
+
+embed_subtitles = false
+# Embed subtitles to downloaded videos

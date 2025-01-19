@@ -16,7 +16,7 @@ from yt_dlp_bonus.exceptions import (
 from yt_dlp.utils import DownloadError
 from datetime import datetime, timezone
 from app.exceptions import InvalidVideoUrl
-from app.config import download_dir, temp_dir, loaded_config
+from app.config import download_dir, loaded_config
 from fastapi import Request, WebSocket
 
 logger = logging.getLogger(__file__)
@@ -41,7 +41,7 @@ compiled_ytdlp_download_error_msg_pattern = re.compile(
 
 def create_temp_dirs() -> t.NoReturn:
     """Create temp-dir for saving files temporarily"""
-    for directory in [download_dir, temp_dir]:
+    for directory in [download_dir]:
         os.makedirs(directory, exist_ok=True)
 
 
