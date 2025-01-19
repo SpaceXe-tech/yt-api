@@ -109,7 +109,7 @@ retries = 3
 continuedl = false
 # Try to continue downloads if possible.
 
-noprogress = false
+noprogress = true
 # Do not print the progress bar
 
 nopart = false
