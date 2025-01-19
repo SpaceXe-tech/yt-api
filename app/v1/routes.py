@@ -261,7 +261,7 @@ async def download_websocket_handler(websocket: WebSocket):
             if d["status"] == "downloading":
                 try:
                     progress = (
-                        d.get("downloaded_bytes", 1) / d.get("total_bytes", 1) * 100
+                        d.get("downloaded_bytes", 0) / d.get("total_bytes", 1) * 100
                     )
                 except:
                     return
@@ -269,7 +269,7 @@ async def download_websocket_handler(websocket: WebSocket):
                 speed = d.get("speed", 0)
                 eta = d.get("eta", 0)
 
-                if not all([progress, speed, eta]):
+                if not speed or not eta:
                     return
 
                 progress_data = {

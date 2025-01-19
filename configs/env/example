@@ -109,7 +109,7 @@ retries = 3
 continuedl = false
 # Try to continue downloads if possible.
 
-noprogress = true
+noprogress = false
 # Do not print the progress bar
 
 nopart = false
@@ -121,7 +121,7 @@ updatetime = true
 verbose = false
 # Print additional info to stdout.
 
-quiet = true
+quiet = false
 # Do not print messages to stdout.
 
 allow_multiple_video_streams = false
