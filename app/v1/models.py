@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, Literal, Any
+from typing import Optional, Literal
 from yt_dlp_bonus.constants import (
     mediaQualitiesType,
     audioBitratesType,
@@ -12,7 +12,7 @@ class SearchVideosResponse(BaseModel):
     class VideoMetadata(BaseModel):
         title: str = Field(description="Video title as in Youtube")
         id: str = Field(description="Video id")
-        duration: str = Field(description="Video's total running")
+        duration: Optional[str] = Field(None, description="Video's total running")
 
     query: str = Field(description="Search query")
     results: list[VideoMetadata]
@@ -81,15 +81,15 @@ class SearchVideosResponse(BaseModel):
 class VideoMetadataResponse(BaseModel):
     class MediaMetadata(BaseModel):
         quality: str  # mediaQualitiesType
-        size: str
+        size: Optional[str] = None
 
     class MediaFormats(BaseModel):
         audio: audioExtensionsType
         video: videoExtensionsType
 
     class OtherMetadata(BaseModel):
-        like_count: int
-        views_count: int
+        like_count: Optional[int] = None
+        views_count: Optional[int] = None
         categories: list[str]
         tags: list[str]
 
@@ -97,7 +97,7 @@ class VideoMetadataResponse(BaseModel):
     title: str
     channel: Optional[str] = None
     uploader_url: Optional[str] = None
-    duration_string: str
+    duration_string: Optional[str] = None
     thumbnail: HttpUrl
     audio: list[MediaMetadata]
     video: list[MediaMetadata]
@@ -136,7 +136,7 @@ class VideoMetadataResponse(BaseModel):
 
 class MediaDownloadProcessPayload(BaseModel):
     url: str = Field(description="Link to the Youtube video or video id")
-    quality: mediaQualitiesType
+    quality: mediaQualitiesType | Literal["bestaudio", "bestvideo", "best"]
     bitrate: audioBitratesType | None = None
     x_lang: Optional[str] = "en"
 
@@ -177,7 +177,7 @@ class MediaDownloadResponse(BaseModel):
                 "is_success": True,
                 "filename": "Alan Walker - Alone 1080p.mp4",
                 "filesize": "35.37 MB",
-                "link": "http://localhost:8000/static/file/Alan%20Walker%20-%20Alone%201080p.mp4",
+                "link": "//localhost:8000/static/file/Alan%20Walker%20-%20Alone%201080p.mp4",
             }
         }
     }

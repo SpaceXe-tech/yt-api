@@ -6,6 +6,7 @@ from app.utils import (
     router_exception_handler,
     get_absolute_link_to_static_file,
     silence_websocket_exceptions,
+    sanitize_filename,
 )
 from app.config import loaded_config, download_dir, temp_dir
 from pathlib import Path
@@ -146,8 +147,8 @@ def get_video_metadata(
         uploader_url=extracted_info.uploader_url,
         duration_string=extracted_info.duration_string,
         thumbnail=extracted_info.thumbnail,
-        audio=audio_formats,
-        video=video_formats,
+        audio=audio_formats or [{"quality": "bestaudio"}],
+        video=video_formats or [{"quality": "best"}],
         format=dict(
             audio=loaded_config.default_audio_format,
             video="mp4",
@@ -165,11 +166,15 @@ def get_video_metadata(
 def process_video_for_download(
     request: Request,
     payload: models.MediaDownloadProcessPayload,
-    x_lang: t.Annotated[str, Header()] = None,
+    x_lang: t.Annotated[
+        str,
+        Header(description="Two-letter ISO set language code for subtitle purposes."),
+    ] = None,
 ) -> models.MediaDownloadResponse:
     """Initiate download processing
     - To download the media file: Add parameter `download` with value
     `true` to the returned link i.e `?download=true`.
+    - Accomplish the same using websocket endpoint at `/api/v1/download/ws`
     """
     payload.x_lang = x_lang or payload.x_lang
     return real_download_process(request, payload)
@@ -193,16 +198,24 @@ def real_download_process(
         ),
     )
     target_format = video_formats.get(payload.quality)
+
+    ytdl_opts = {
+        "outtmpl": f"{sanitize_filename(extracted_info.title)}(%(format_note)s).%(ext)s"
+    }
+
     if loaded_config.embed_subtitles:
-        ydl_opts = {
-            "postprocessors": [
-                {"already_have_subtitle": False, "key": "FFmpegEmbedSubtitle"}
-            ],
-            "writeautomaticsub": True,
-            "writesubtitles": True,
-            "subtitleslangs": [payload.x_lang or "en"],
-        }
-        kwargs["ytdl_params"] = ydl_opts
+        ytdl_opts.update(
+            {
+                "postprocessors": [
+                    {"already_have_subtitle": False, "key": "FFmpegEmbedSubtitle"}
+                ],
+                "writeautomaticsub": True,
+                "writesubtitles": True,
+                "subtitleslangs": [payload.x_lang or "en"],
+            }
+        )
+
+    kwargs["ytdl_params"] = ytdl_opts
 
     if payload.quality in audioQualities:
         assert target_format, (
@@ -216,7 +229,7 @@ def real_download_process(
             progress_hooks=progress_hooks,
             **kwargs,
         )
-    else:
+    elif payload.quality in videoQualities:
         assert target_format, (
             f"The video does not support the video quality '{payload.quality}'. "
             f"Try other video qualities like {', '.join([quality for quality in videoQualities if quality != payload.quality])}."
@@ -229,6 +242,22 @@ def real_download_process(
             **kwargs,
         )
         # TODO: Consider audio_format as well
+    else:
+        # bestaudio | bestvideo | best
+        if payload.bitrate:
+            # audio
+            processed_info_dict = downloader.ydl_run_audio(
+                extracted_info,
+                payload.bitrate,
+                audio_format=payload.quality,
+            )
+        else:
+            processed_info_dict = downloader.ydl_run(
+                extracted_info,
+                video_format=None,
+                audio_format=None,
+                default_format=payload.quality,
+            )
 
     filepath = Path(processed_info_dict["requested_downloads"][0]["filepath"])
 
@@ -269,7 +298,7 @@ async def download_websocket_handler(websocket: WebSocket):
                 speed = d.get("speed", 0)
                 eta = d.get("eta", 0)
 
-                if not speed or not eta:
+                if not speed:
                     return
 
                 progress_data = {
