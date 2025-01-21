@@ -5,6 +5,7 @@ from yt_dlp_bonus.models import ExtractedInfo
 from app.utils import get_video_id, utc_now
 from app.db import VideoInfo, engine
 from sqlmodel import select, Session
+from sqlalchemy.exc import IntegrityError
 
 
 def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
@@ -20,8 +21,12 @@ def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
                 extracted_info = yt.extract_info_and_form_model(url)
                 cached_extracted_info.info = extracted_info.model_dump_json()
                 cached_extracted_info.updated_on = utc_now()
-                session.add(cached_extracted_info)
-                session.commit()
+                try:
+                    session.add(cached_extracted_info)
+                    session.commit()
+                except IntegrityError:
+                    # Very common exception
+                    pass
                 return extracted_info
         else:
             extracted_info = yt.extract_info_and_form_model(url)
