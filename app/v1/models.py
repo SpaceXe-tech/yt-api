@@ -147,8 +147,7 @@ class MediaDownloadProcessPayload(BaseModel):
                     "url": "https://youtu.be/1-xGerv5FOk?si=Vv_FeKPF_6eDp5di",
                     "quality": "720p",
                     "bitrate": "128k",
-                    "x_lang": "en"
-
+                    "x_lang": "en",
                 },
                 {
                     "url": "1-xGerv5FOk",
