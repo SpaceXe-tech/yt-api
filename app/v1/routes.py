@@ -119,7 +119,9 @@ def get_video_metadata(
     """
     extracted_info = get_extracted_info(yt=yt, url=url)
     video_formats = yt.get_video_qualities_with_extension(
-        extracted_info, ext=loaded_config.default_extension
+        extracted_info,
+        ext=loaded_config.default_extension,
+        audio_ext=loaded_config.default_audio_format,
     )
     updated_video_formats = yt.update_audio_video_size(video_formats)
     audio_formats = []

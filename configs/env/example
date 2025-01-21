@@ -52,7 +52,7 @@ clear_temps = true
 search_limit = 50
 # Video search results limit
 
-default_extension = webm
+default_extension = mp4
 # Extension filter for downloading videos/audios
 # possible values [webm, mp4]
 # mp4 tends to have slow download speed.
