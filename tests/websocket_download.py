@@ -23,7 +23,7 @@ async def send_and_receive_message():
                 match response["status"]:
                     case "downloading":
                         print(
-                            f">> Downloading : {detail['progress']} {detail['speed']} {detail['eta']}",
+                            f">> Downloading [{detail['ext']}] : {detail['progress']} {detail['speed']} {detail['eta']}",
                             end="\r",
                         )
 

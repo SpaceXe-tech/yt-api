@@ -205,7 +205,7 @@ def real_download_process(
         "outtmpl": f"{loaded_config.filename_prefix or ''}{sanitize_filename(extracted_info.title)} (%(format_note)s).%(ext)s"
     }
 
-    if loaded_config.embed_subtitles:
+    if loaded_config.embed_subtitles and payload.x_lang is not None:
         ytdl_opts.update(
             {
                 "postprocessors": [
@@ -213,7 +213,7 @@ def real_download_process(
                 ],
                 "writeautomaticsub": True,
                 "writesubtitles": True,
-                "subtitleslangs": [payload.x_lang or "en"],
+                "subtitleslangs": [payload.x_lang],
             }
         )
 
@@ -307,6 +307,7 @@ async def download_websocket_handler(websocket: WebSocket):
                     "progress": f"{progress:.1f}%",
                     "speed": f"{speed/1024/1024:.1f} MB/s",
                     "eta": f"{eta//60}:{eta%60:02d}",
+                    "ext": d.get("filename", "").split(".")[-1],
                 }
                 asyncio.run(
                     send_progress(
