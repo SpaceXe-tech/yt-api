@@ -194,8 +194,8 @@ class EnvVariables(BaseModel):
     @field_validator("filename_prefix")
     def validate_filename_prefix(value):
         if not value:
-            return
-        return  value + ' '
+            return ""
+        return value + " "
 
     def po_token_verifier(self) -> tuple[str, str]:
         return self.visitorData, self.po_token
