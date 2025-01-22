@@ -4,7 +4,6 @@ from app.utils import create_temp_dirs, download_dir
 from fastapi import FastAPI
 from shutil import rmtree
 from app.db import create_tables
-from yt_dlp_bonus.utils import run_system_command
 
 
 def event_startup_create_tempdirs():
@@ -17,13 +16,6 @@ def event_startup_create_tables():
 
 def event_shutdown_clear_previous_downloads():
     rmtree(download_dir)
-
-
-def event_all_clear_temp_files():
-    run_system_command("rm *.part *.ytdl *.opus *.webm *.m4a")
-    run_system_command(
-        f"rm '{download_dir}/*.part' '{download_dir}/*.ytdl' '{download_dir}/*.opus'"
-    )
 
 
 def register_events(app: FastAPI) -> FastAPI:
