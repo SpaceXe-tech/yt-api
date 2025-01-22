@@ -66,6 +66,11 @@ static_server_url =
 # Static server accessible endpoint
 # e.g http://localhost:8888/file
 
+serve_frontend_from_static_server=false
+# Frontend contents will be served along with 
+# downloadable videos and audios
+# NOTE: This disables serving forntend-contents from the API server
+
 api_base_url =
 # To be used for running the proxy script - url pointing to the API
 # e.g http://localhost:8000

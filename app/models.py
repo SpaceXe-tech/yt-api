@@ -50,6 +50,8 @@ class EnvVariables(BaseModel):
     # static server options
     static_server_url: Optional[str] = None
 
+    serve_frontend_from_static_server: Optional[bool] = False
+
     api_base_url: Optional[str] = None
 
     # Downloader params - yt_dlp
@@ -82,6 +84,13 @@ class EnvVariables(BaseModel):
 
     @property
     def ytdlp_params(self) -> dict[str, int | bool | None]:
+
+        if self.serve_frontend_from_static_server and not self.frontend_dir:
+            raise Exception(
+                "You have specified to serve frontend contents from static server "
+                "yet you have NOT specified the FRONTEND-DIR. "
+                "Set the path to frontend_dir in the .env (config) file."
+            )
         params = dict(
             cookiefile=self.cookiefile,
             # http_chunk_size=self.http_chunk_size, # activating this makes

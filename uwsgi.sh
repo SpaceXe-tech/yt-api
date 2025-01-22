@@ -10,9 +10,9 @@ elif [ "$target_server" == "static" ]; then
    echo "[INFO] To daemonize process use : make uwsgi-static"
    echo "[STATIC] Running on 0.0.0.0:8888"
    echo "[STATIC] Serving files from static/downloads at /file"
-   uwsgi --http=0.0.0.0:8888 --static-map /file=static/downloads -w servers.static:app --enable-threads
+   uwsgi --http=0.0.0.0:8888 -w servers.static:app --enable-threads
 else
    echo "[ERROR] proxy|static must be explicitly declared"
-   echo "        e.g ./uwsgi.sh proxy"
+   echo "        e.g $0 proxy"
    exit 1
 fi

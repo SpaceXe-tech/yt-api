@@ -43,7 +43,7 @@ def test_live():
     return {}
 
 
-if loaded_config.frontend_dir:
+if loaded_config.frontend_dir and not loaded_config.serve_frontend_from_static_server:
     # Lets's serve the frontend from /
     logger.info(f"Serving frontend. Frontend dir: {loaded_config.frontend_dir}")
     app.mount(
