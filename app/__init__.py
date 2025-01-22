@@ -32,7 +32,6 @@ app = FastAPI(
 )
 
 app.include_router(v1_router, prefix="/api", tags=["v1"])
-# app.mount("/static", StaticFiles(directory=temp_dir, check_dir=False), name="static")
 
 if not loaded_config.static_server_url:
     app.mount("/static", WSGIMiddleware(static_app, workers=50))
