@@ -44,7 +44,7 @@ class EnvVariables(BaseModel):
     search_limit: Optional[int] = 50
     video_info_cache_period_in_hrs: Optional[PositiveInt] = 4
     database_engine: Optional[str] = "sqlite:///db.sqlite3"
-    default_extension: Literal["mp4", "webm"] = "mp4"
+    default_extension: Literal["mp4", "webm"] = "webm"
     frontend_dir: Optional[str] = None
 
     # static server options
