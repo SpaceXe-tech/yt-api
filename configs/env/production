@@ -110,7 +110,7 @@ noresizebuffer = false
 retries = 3
 # Number of times to retry for expected network errors
 
-continuedl = false
+continuedl = true
 # Try to continue downloads if possible.
 
 noprogress = true
