@@ -59,17 +59,17 @@ class EnvVariables(BaseModel):
     enable_logging: Optional[bool] = False
     proxy: Optional[str] = None
     cookiefile: Optional[str] = None
-    http_chunk_size: Optional[int] = 4096
-    updatetime: Optional[bool] = False
+    http_chunk_size: Optional[int] = 1024
+    updatetime: Optional[bool] = True
     buffersize: Optional[int] = None
     ratelimit: Optional[int] = None
     throttledratelimit: Optional[int] = None
     min_filesize: Optional[int] = None
     max_filesize: Optional[int] = None
     noresizebuffer: Optional[bool] = None
-    retries: Optional[int] = 2
-    continuedl: Optional[bool] = False
-    noprogress: Optional[bool] = False
+    retries: Optional[int] = 3
+    continuedl: Optional[bool] = True
+    noprogress: Optional[bool] = True
     nopart: Optional[bool] = False
     concurrent_fragment_downloads: Optional[int] = 1
     # YoutubeDL params
@@ -77,7 +77,7 @@ class EnvVariables(BaseModel):
     quiet: Optional[bool] = None
     allow_multiple_video_streams: Optional[bool] = None
     allow_multiple_audio_streams: Optional[bool] = None
-    geo_bypass: Optional[bool] = True
+    geo_bypass: Optional[bool] = False
     geo_bypass_country: Optional[str] = None
     # Post-download opts
     embed_subtitles: Optional[bool] = False
