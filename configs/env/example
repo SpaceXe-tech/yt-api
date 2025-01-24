@@ -55,8 +55,16 @@ search_limit = 50
 default_extension = webm
 # Extension filter for downloading videos/audios
 # possible values [webm, mp4]
-# mp4 tends to have slow download speed and some
-# qualities missing in some videos.
+#############################################################################
+#                   Comparison between webm and mp4
+#
+# |   Factor          |    Webm                 |         mp4               |
+# |-------------------|-------------------------|---------------------------|
+# | Qualities Support | Up to 4k+               | Up to 8k                  |
+# | Size estimation   | Supports all            | At times limited          |
+# | Merging Speed     | Fast                    | Slow                      |
+# | Download Speed    | Fast                    | Fast                      |
+##############################################################################
 
 enable_logging = false
 # downloader logging
