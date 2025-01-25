@@ -82,6 +82,8 @@ class EnvVariables(BaseModel):
     # Post-download opts
     embed_subtitles: Optional[bool] = False
 
+    append_id_in_filename: bool = False
+
     @property
     def ytdlp_params(self) -> dict[str, int | bool | None]:
 

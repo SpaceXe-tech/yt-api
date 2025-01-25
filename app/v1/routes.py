@@ -202,7 +202,11 @@ def real_download_process(
     target_format = video_formats.get(payload.quality)
 
     ytdl_opts = {
-        "outtmpl": f"{loaded_config.filename_prefix or ''}{sanitize_filename(extracted_info.title)} (%(format_note)s, %(id)s).%(ext)s"
+        "outtmpl": (
+            f"{loaded_config.filename_prefix or ''}"
+            f"{sanitize_filename(extracted_info.title)} "
+            f"(%(format_note)s{', %(id)s' if loaded_config.append_id_in_filename else ''}).%(ext)s"
+        )
     }
 
     if loaded_config.embed_subtitles and payload.x_lang is not None:

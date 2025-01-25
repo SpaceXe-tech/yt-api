@@ -154,3 +154,7 @@ geo_bypass = false
 
 embed_subtitles = false
 # Embed subtitles to downloaded videos
+
+append_id_in_filename = true
+# Include the video id in its filename
+# To add uniqueness to videos with a common title.
