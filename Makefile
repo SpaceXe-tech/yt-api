@@ -4,7 +4,7 @@
 		  run-proxy-server run-static-server \
 		  run-proxy-server-uwsgi run-static-server-uwsgi \
 		  uwsgi-proxy uwsgi-static \
-		  deploy 
+		  deploy clear-expired-extracts
 	)
 
 PYTHON := python3
@@ -23,6 +23,10 @@ test: test-api-v1
 # Target to test RestAPI V1
 test-api-v1:
 	$(PYTHON) -m pytest tests/test_v1.py -xv
+
+# Delete cached expired extracted info
+clear-expired-extracts:
+	$(PYTHON) -m app utils delete-expired-extracts
 
 # Target to run development server
 runserver-dev:
