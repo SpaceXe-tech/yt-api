@@ -301,8 +301,8 @@ async def download_websocket_handler(websocket: WebSocket):
                 except:
                     return
 
-                speed = d.get("speed", 0)
-                eta = d.get("eta", 0)
+                speed = d.get("speed") or 0
+                eta = d.get("eta") or 0
 
                 if not speed:
                     return
