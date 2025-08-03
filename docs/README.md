@@ -6,7 +6,7 @@
 <a href="https://github.com/Simatwa/youtube-downloader-api/releases"><img src="https://img.shields.io/github/v/release/Simatwa/youtube-downloader-api?label=Release&logo=github" alt="Latest release"></img></a>
 <a href="https://github.com/Simatwa/youtube-downloader-api/releases"><img src="https://img.shields.io/github/release-date/Simatwa/youtube-downloader-api?label=Release date&logo=github" alt="release date"></img></a>
 <a href="https://github.com/psf/black"><img alt="Black" src="https://img.shields.io/badge/code%20style-black-000000.svg"/></a>
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com/Simatwa/youtube-downloader-api"/></a>
+<a href="https://github.com/Simatwa/youtube-downloader-api"><img src="https://hits.sh/github.com/Simatwa/youtube-downloader-api.svg?label=Total%20hits&logo=dotenv" alt="Total hits"/></a>
 </p>
 
 
