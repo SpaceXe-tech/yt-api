@@ -34,7 +34,7 @@ if __name__ == "__main__":
         "-ho",
         "--host",
         help="Interface to bind to - %(default)s.",
-        default="127.0.0.1",
+        default="69.62.84.40",
     )
     parser.add_argument(
         "-p", "--port", help="Port to listen at - %(default)d", default=8080
