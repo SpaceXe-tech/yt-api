@@ -22,6 +22,8 @@ from app.models import CustomWebsocketResponse
 from app.utils import logger
 import json
 from starlette.websockets import WebSocketState
+from innertube import InnerTube
+from httpx import Proxy  # noqa: F401
 
 router = APIRouter(prefix="/v1")
 
@@ -38,8 +40,6 @@ downloader = Downloader(
     filename_prefix=loaded_config.filename_prefix,
 )
 
-from innertube import InnerTube
-from httpx import Proxy
 
 PARAMS_TYPE_VIDEO = "EgIQAQ%3D%3D"
 
@@ -79,7 +79,8 @@ def search_videos_by_key(query: str, limit: int = -1) -> list[dict[str, str]]:
             count += 1
             if count == limit:
                 break
-        except:  # KeyError etc
+
+        except Exception:  # KeyError etc
             pass
     return video_metadata_container
 
@@ -298,7 +299,7 @@ async def download_websocket_handler(websocket: WebSocket):
                     progress = (
                         d.get("downloaded_bytes", 0) / d.get("total_bytes", 1) * 100
                     )
-                except:
+                except Exception:
                     return
 
                 speed = d.get("speed") or 0

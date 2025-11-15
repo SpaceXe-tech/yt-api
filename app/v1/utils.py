@@ -33,6 +33,10 @@ def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
             new_video_info = VideoInfo(
                 id=video_id, info=extracted_info.model_dump_json(), updated_on=utc_now()
             )
-            session.add(new_video_info)
-            session.commit()
+            try:
+                session.add(new_video_info)
+                session.commit()
+            except IntegrityError:
+                pass
+
             return extracted_info

@@ -4,7 +4,7 @@ from app.utils import create_temp_dirs, download_dir, utc_now, logger
 from fastapi import FastAPI
 from shutil import rmtree
 from app.db import create_tables, VideoInfo, engine
-from sqlmodel import Session, select, delete
+from sqlmodel import Session, delete
 from app.config import loaded_config
 from datetime import timedelta
 

@@ -9,7 +9,6 @@
 <a href="https://github.com/Simatwa/youtube-downloader-api"><img src="https://hits.sh/github.com/Simatwa/youtube-downloader-api.svg?label=Total%20hits&logo=dotenv" alt="Total hits"/></a>
 </p>
 
-
 ## Overview
 
 A REST-API that provide endpoints for searching, extracting metadata and downloading YouTube videos in mp4, webm, m4a and mp3 formats in different qualities.
