@@ -37,15 +37,15 @@ cd youtube-downloader
 Next, create and activate a virtual environment:
 
 ```sh
-pip install virtualenv
-virtualenv venv
-source venv/bin/activate
+pip install uv
+uv venv
+source .venv/bin/activate
 ```
 
 After activating the virtual environment, install the required dependencies:
 
 ```sh
-pip install -r requirements.txt
+uv pip install -r requirements-all.txt
 ```
 
 ### Step 3: Configure Environment Variables
@@ -60,7 +60,7 @@ Copy any of [configs/env/*](../configs/env/) file to the root directory of the p
 Finally, start the server using the following command:
 
 ```sh
-python -m fastapi run app
+fastapi run app
 ```
 
 The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc>
