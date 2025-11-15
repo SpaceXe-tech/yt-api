@@ -48,6 +48,9 @@ After activating the virtual environment, install the required dependencies:
 uv pip install -r requirements-all.txt
 ```
 
+> [!TIP]
+> Its good to update yt-dlp version `uv pip install -U yt-dlp`
+
 ### Step 3: Configure Environment Variables
 
 Copy any of [configs/env/*](../configs/env/) file to the root directory of the project and rename it to `.env`. Edit the `.env` file to set up your environment variables according to your needs.
@@ -60,7 +63,7 @@ Copy any of [configs/env/*](../configs/env/) file to the root directory of the p
 Finally, start the server using the following command:
 
 ```sh
-fastapi run app
+python -m app run
 ```
 
 The docs will be accessible from  <http://localhost:8000/api/docs> and redocs from <http://localhost:8000/api/redoc>
