@@ -145,7 +145,7 @@ class EnvVariables(BaseModel):
                     }
                 }
             else:
-                raise ValueError(f"po_token requires either cookiefile or visitorData.")
+                raise ValueError("po_token requires either cookiefile or visitorData.")
         elif self.visitorData:
             params["extractor_args"] = {
                 "youtube": {

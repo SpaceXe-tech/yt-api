@@ -50,7 +50,8 @@ logging.basicConfig(
     datefmt="%H:%M:%S %d-%b-%Y",
 )
 
-get_exception_string = lambda e: e.args[1] if e.args and len(e.args) > 1 else str(e)
+def get_exception_string(e):
+    return e.args[1] if e.args and len(e.args) > 1 else str(e)
 
 
 @dataclass
