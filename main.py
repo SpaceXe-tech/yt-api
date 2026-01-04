@@ -2,7 +2,7 @@
 """
 Converts fastapi app to wsgi app
 
-uwsgi --http=69.62.84.40:8080 -w main:application
+uwsgi  -w main:application
 """
 
 from app import app
