@@ -12,6 +12,8 @@ from typing import Optional, Literal
 from pathlib import Path
 import os
 import logging
+import time
+import httpx
 
 
 class CustomWebsocketResponse(BaseModel):
@@ -19,25 +21,42 @@ class CustomWebsocketResponse(BaseModel):
     detail: dict
 
 
+COOKIES_PATH = Path("cookies/cookies.txt")
+COOKIES_REFRESH_SECONDS = 48 * 60 * 60
+
+
+def fetch_remote_cookies(url: str) -> None:
+    COOKIES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with httpx.Client(timeout=30) as client:
+        r = client.get(url)
+        r.raise_for_status()
+        COOKIES_PATH.write_bytes(r.content)
+
+
+def ensure_cookies(url: Optional[str]) -> Optional[str]:
+    if not url:
+        return None
+    if not COOKIES_PATH.exists():
+        fetch_remote_cookies(url)
+        return str(COOKIES_PATH)
+    age = time.time() - COOKIES_PATH.stat().st_mtime
+    if age >= COOKIES_REFRESH_SECONDS:
+        fetch_remote_cookies(url)
+    return str(COOKIES_PATH)
+
+
 class EnvVariables(BaseModel):
-    # contacts
     contact_name: Optional[str] = "Unknown"
     contact_email: Optional[EmailStr] = "email@localhost.dev"
     contact_url: Optional[HttpUrl] = "http://localhost:8000/"
-    # API
+
     api_description: Optional[str] = ""
     api_title: Optional[str] = "Youtube-Downloader"
-    api_description: Optional[str] = ""
     api_terms_of_service: Optional[HttpUrl] = "http://localhost:8000/terms-of-service"
 
-    visitorData: Optional[str] = Field(
-        None, description="Extracted along with po token"
-    )
-    po_token: Optional[str] = Field(
-        None,
-        description="How to extract it refer to : https://github.com/yt-dlp/yt-dlp/wiki/Extractors#"
-        "manually-acquiring-a-po-token-from-a-browser-for-use-when-logged-out",
-    )
+    visitorData: Optional[str] = Field(None)
+    po_token: Optional[str] = Field(None)
+
     filename_prefix: Optional[str] = ""
     working_directory: Optional[str] = os.getcwd()
     clear_temps: Optional[bool] = True
@@ -47,18 +66,17 @@ class EnvVariables(BaseModel):
     default_extension: Literal["mp4", "webm"] = "webm"
     frontend_dir: Optional[str] = None
 
-    # static server options
     static_server_url: Optional[str] = None
-
     serve_frontend_from_static_server: Optional[bool] = False
-
     api_base_url: Optional[str] = None
 
-    # Downloader params - yt_dlp
     default_audio_format: Literal["webm", "m4a"] = "m4a"
     enable_logging: Optional[bool] = False
     proxy: Optional[str] = None
+
     cookiefile: Optional[str] = None
+    cookies_url: Optional[HttpUrl] = None
+
     http_chunk_size: Optional[int] = 4096
     updatetime: Optional[bool] = False
     buffersize: Optional[int] = None
@@ -72,33 +90,25 @@ class EnvVariables(BaseModel):
     noprogress: Optional[bool] = False
     nopart: Optional[bool] = False
     concurrent_fragment_downloads: Optional[int] = 1
-    # YoutubeDL params
+
     verbose: Optional[bool] = None
     quiet: Optional[bool] = None
     allow_multiple_video_streams: Optional[bool] = None
     allow_multiple_audio_streams: Optional[bool] = None
     geo_bypass: Optional[bool] = True
     geo_bypass_country: Optional[str] = None
-    # Post-download opts
-    embed_subtitles: Optional[bool] = False
 
+    embed_subtitles: Optional[bool] = False
     append_id_in_filename: bool = False
 
     @property
     def ytdlp_params(self) -> dict[str, int | bool | None]:
+        if self.cookies_url:
+            self.cookiefile = ensure_cookies(str(self.cookies_url))
 
-        if self.serve_frontend_from_static_server and not self.frontend_dir:
-            raise Exception(
-                "You have specified to serve frontend contents from static server "
-                "yet you have NOT specified the FRONTEND-DIR. "
-                "Set the path to frontend_dir in the .env (config) file."
-            )
         params = dict(
             cookiefile=self.cookiefile,
-            # http_chunk_size=self.http_chunk_size, # activating this makes
-            # download speed so slow. Consider giving it a fix.
             updatetime=self.updatetime,
-            # buffersize=self.buffersize,
             ratelimit=self.ratelimit,
             throttledratelimit=self.throttledratelimit,
             min_filesize=self.min_filesize,
@@ -118,15 +128,16 @@ class EnvVariables(BaseModel):
             keep_fragments=False,
             fragment_retries=2,
         )
+
         if self.proxy:
-            # Passing proxy with null value makes download to fail
             params["proxy"] = self.proxy
+
         if self.enable_logging:
             params["logger"] = logging.getLogger("uvicorn")
+
         if self.quiet:
-            # Assumes it's running in production mode
-            logging.getLogger("yt_dlp_bonus").setLevel(logging.ERROR)
             logging.getLogger("yt_dlp").setLevel(logging.ERROR)
+
         if self.po_token:
             if self.cookiefile:
                 params["extractor_args"] = {
@@ -155,44 +166,38 @@ class EnvVariables(BaseModel):
 
         return params
 
-    @field_validator("api_description")
-    def validate_api_description(value):
-        if not value:
-            return ""
-        description_path = Path(value)
-        if not description_path.exists() or not description_path.is_file():
-            raise TypeError(
-                f"Invalid value for api_description passed - {value}. Must be a valid path to a file."
-            )
-        with open(value) as fh:
-            return fh.read()
-
-    @field_validator("working_directory")
-    def validate_working_directory(value):
-        working_dir = Path(value)
-        if value == "static" and not working_dir.exists():
-            os.mkdir("static")
-        elif not working_dir.exists() or not working_dir.is_dir():
-            raise TypeError(f"Invalid working_directory passed - {value}")
-        return value
-
     @field_validator("cookiefile")
     def validate_cookiefile(value):
         if not value:
-            return
-        cookiefile = Path(value)
-        if not cookiefile.exists() or not cookiefile.is_file():
+            return value
+        p = Path(value)
+        if not p.exists() or not p.is_file():
             raise TypeError(f"Invalid cookiefile passed - {value}")
+        return value
+
+    @field_validator("cookies_url")
+    def validate_cookie_sources(value, info):
+        if value and info.data.get("cookiefile"):
+            raise ValueError("Use either cookiefile or cookies_url")
+        return value
+
+    @field_validator("working_directory")
+    def validate_working_directory(value):
+        p = Path(value)
+        if value == "static" and not p.exists():
+            os.mkdir("static")
+        elif not p.exists() or not p.is_dir():
+            raise TypeError(f"Invalid working_directory passed - {value}")
         return value
 
     @field_validator("frontend_dir")
     def validate_frontend_dir(value):
         if not value:
-            return
-        frontend_dir = Path(value)
-        if not frontend_dir.exists() or not frontend_dir.is_dir():
+            return value
+        p = Path(value)
+        if not p.exists() or not p.is_dir():
             raise TypeError(f"Invalid frontend_dir passed - {value}")
-        if not frontend_dir.joinpath("index.html").exists():
+        if not p.joinpath("index.html").exists():
             raise TypeError(f"Frontend-dir must contain index.html file - {value}")
         return value
 
@@ -213,7 +218,6 @@ class EnvVariables(BaseModel):
 
     @property
     def contacts(self) -> dict[str, str | EmailStr]:
-        """API' contact details"""
         return dict(
             name=self.contact_name,
             email=str(self.contact_email),
@@ -222,7 +226,6 @@ class EnvVariables(BaseModel):
 
     @property
     def api_base_url_validated(self) -> str:
-        """Checks that `api_base_url` is not None"""
         if not self.api_base_url:
             raise ValueError("Base url for API cannot be null.")
         return self.api_base_url
