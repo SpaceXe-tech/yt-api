@@ -14,9 +14,14 @@ def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
     raw_info = yt.extract_info(url, download=False)
     
     data = raw_info.copy()
-    data.setdefault("channel", data.get("uploader") or "Unknown")
-    data.setdefault("uploader", data.get("channel") or "Unknown")
-    data.setdefault("channel_follower_count", 0)
+    
+    channel_val = data.get("channel") or data.get("uploader") or data.get("creator") or "Unknown"
+    uploader_val = data.get("uploader") or data.get("channel") or data.get("creator") or "Unknown"
+    follower_count = data.get("channel_follower_count") or 0
+    
+    data["channel"] = channel_val
+    data["uploader"] = uploader_val
+    data["channel_follower_count"] = follower_count
     
     extracted_info = ExtractedInfo(**data)
     
