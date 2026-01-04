@@ -11,6 +11,15 @@ from sqlalchemy.exc import IntegrityError
 def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
     """Get url's extracted_info from cache or youtube accordingly"""
     video_id = get_video_id(url)
+    raw_info = yt.extract_info(url, download=False)
+    
+    data = raw_info.copy()
+    data.setdefault("channel", data.get("uploader") or "Unknown")
+    data.setdefault("uploader", data.get("channel") or "Unknown")
+    data.setdefault("channel_follower_count", 0)
+    
+    extracted_info = ExtractedInfo(**data)
+    
     query = select(VideoInfo).where(VideoInfo.id == video_id)
     with Session(bind=engine) as session:
         cached_extracted_info: VideoInfo = session.exec(query).first()
@@ -18,18 +27,15 @@ def get_extracted_info(yt: YoutubeDLBonus, url: str) -> ExtractedInfo:
             if cached_extracted_info.is_valid:
                 return cached_extracted_info.extracted_info
             else:
-                extracted_info = yt.extract_info_and_form_model(url)
                 cached_extracted_info.info = extracted_info.model_dump_json()
                 cached_extracted_info.updated_on = utc_now()
                 try:
                     session.add(cached_extracted_info)
                     session.commit()
                 except IntegrityError:
-                    # Very common exception
                     pass
                 return extracted_info
         else:
-            extracted_info = yt.extract_info_and_form_model(url)
             new_video_info = VideoInfo(
                 id=video_id, info=extracted_info.model_dump_json(), updated_on=utc_now()
             )
